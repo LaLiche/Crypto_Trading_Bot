@@ -1,6 +1,7 @@
 import plotly
 from botchart import BotChart
 from poloniex import poloniex
+import timetranslate as tt
 
 
 class PlotGraphe(object):
@@ -22,7 +23,7 @@ class PlotGraphe(object):
             close_data.append(c.close)
             high_data.append(c.high)
             low_data.append(c.low)
-            x_data.append(c.startTime)
+            x_data.append((c.startTime))
 
         trace = plotly.graph_objs.Candlestick(
             x = x_data,
@@ -34,11 +35,7 @@ class PlotGraphe(object):
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
             'yaxis': {'title': self.chart.pair},
-            'shapes': [{
-                'x0': '2016-12-09', 'x1': '2016-12-09',
-                'y0': 0, 'y1': 1, 'xref': 'x', 'yref': 'paper',
-                'line': {'color': 'rgb(30,30,30)', 'width': 1}
-            }]
+             "xaxis" : {'ticks':"",'ticktext': tt.FloattoTime(tab=x_data),'tickvals': x_data }
             }
 
         data = [trace]
