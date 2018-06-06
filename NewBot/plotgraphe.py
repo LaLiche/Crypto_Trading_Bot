@@ -1,5 +1,7 @@
 import plotly
 from botchart import BotChart
+from poloniex import poloniex
+
 
 class PlotGraphe(object):
     def __init__(self,chart):
@@ -29,5 +31,16 @@ class PlotGraphe(object):
             high = high_data,
             low = low_data)
 
+        layout = {
+            'title': self.chart.pair+" "+str(self.chart.period)+" s",
+            'yaxis': {'title': self.chart.pair},
+            'shapes': [{
+                'x0': '2016-12-09', 'x1': '2016-12-09',
+                'y0': 0, 'y1': 1, 'xref': 'x', 'yref': 'paper',
+                'line': {'color': 'rgb(30,30,30)', 'width': 1}
+            }]
+            }
+
         data = [trace]
-        plotly.offline.plot(data,filename='test_graphe.html')
+        fig = dict(data=data, layout=layout)
+        plotly.offline.plot(fig,filename='test_graphe.html')

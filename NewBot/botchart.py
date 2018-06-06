@@ -2,15 +2,16 @@ from poloniex import poloniex
 import urllib, json
 import pprint
 from botcandlestick import BotCandlestick
-
+import time
+import timetranslate as tt
 
 class BotChart(object):
-	def __init__(self, exchange, pair, period, backtest=True):
+	def __init__(self, exchange, pair, period, startTime, endTime, backtest=True):
 		self.pair = pair
 		self.period = period
 
-		self.startTime = 1491048000
-		self.endTime = 1491591200
+		self.startTime = tt.TimetoFloat(startTime)
+		self.endTime = tt.TimetoFloat(endTime)
 
 		self.data = []
 

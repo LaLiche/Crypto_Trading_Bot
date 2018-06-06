@@ -3,15 +3,17 @@ import urllib2
 import json
 import time
 import hmac,hashlib
+import timetranslate as tt
 
+def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):
+    return time.mktime(time.strptime(datestr, format))
 
 class poloniex:
     def __init__(self, APIKey, Secret):
         self.APIKey = APIKey
         self.Secret = Secret
 
-    def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):
-        return time.mktime(time.strptime(datestr, format))
+
 
     def post_process(self, before):
         after = before
@@ -22,7 +24,7 @@ class poloniex:
                 for x in xrange(0, len(after['return'])):
                     if(isinstance(after['return'][x], dict)):
                         if('datetime' in after['return'][x] and 'timestamp' not in after['return'][x]):
-                            after['return'][x]['timestamp'] = float(createTimeStamp(after['return'][x]['datetime']))
+                            after['return'][x]['timestamp'] = float(tt.TimetoFloat(after['return'][x]['datetime']))
 
         return after
 
