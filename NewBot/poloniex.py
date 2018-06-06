@@ -5,8 +5,6 @@ import time
 import hmac,hashlib
 import timetranslate as tt
 
-def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):
-    return time.mktime(time.strptime(datestr, format))
 
 class poloniex:
     def __init__(self, APIKey, Secret):

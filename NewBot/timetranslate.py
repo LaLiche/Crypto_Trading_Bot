@@ -5,8 +5,9 @@ def TimetoFloat(temps,format="%Y-%m-%d %H:%M:%S"):
 
 def FloattoTime(str="",tab=[],format="%Y-%m-%d %H:%M:%S"):
     if tab != []:
+        t = []
         for e in tab:
-            time.strftime(format,time.localtime(e))
-        return tab
+            t.append(time.strftime(format,time.localtime(e)))
+        return t
     else:
         return time.strftime(format,time.localtime(str))
