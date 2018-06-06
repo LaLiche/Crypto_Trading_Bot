@@ -20,9 +20,11 @@ class BotChart(object):
 
 			if backtest:
 				poloData = self.conn.api_query("returnChartData",{"currencyPair":self.pair,"start":self.startTime,"end":self.endTime,"period":self.period})
+				compteur = 0
 				for datum in poloData:
 					if (datum['open'] and datum['close'] and datum['high'] and datum['low']):
-						self.data.append(BotCandlestick(self.period,datum['open'],datum['close'],datum['high'],datum['low'],datum['weightedAverage']))
+						self.data.append(BotCandlestick(self.period,datum['open'],datum['close'],datum['high'],datum['low'],self.startTime+compteur*self.period,datum['weightedAverage']))
+						compteur += 1
 
 		if (exchange == "bittrex"):
 			if backtest:
