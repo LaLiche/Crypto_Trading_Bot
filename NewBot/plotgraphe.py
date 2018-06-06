@@ -16,7 +16,8 @@ class PlotGraphe(object):
         close_data = []
         high_data = []
         low_data = []
-        x_data = [self.chart.startTime + i*self.chart.period for i in range(0,int((self.chart.endTime-self.chart.startTime)//self.chart.period))]
+        ech = 1
+        x_data = [self.chart.startTime + ech*i*self.chart.period for i in range(0,int(1+(self.chart.endTime-self.chart.startTime)//(ech*self.chart.period)))]
 
 
         for c in self.chart.data:
@@ -35,7 +36,7 @@ class PlotGraphe(object):
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
             'yaxis': {'title': self.chart.pair},
-             "xaxis" : {'ticks':"",'ticktext': tt.FloattoTime(tab=x_data),'tickvals': x_data }
+             "xaxis" : {'ticks':"",'showticklabels':False,'ticktext': tt.FloattoTime(tab=x_data),'tickvals': x_data }
             }
 
         data = [trace]
