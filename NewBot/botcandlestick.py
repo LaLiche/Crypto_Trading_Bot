@@ -4,13 +4,13 @@ import time
 from botlog import BotLog
 
 class BotCandlestick(object):
-	def __init__(self, period=300,open=None,close=None,high=None,low=None,priceAverage=None):
+	def __init__(self, period=300,open=None,close=None,high=None,low=None,startTime=time.time(),priceAverage=None):
 		self.current = None
 		self.open = open
 		self.close = close
 		self.high = high
 		self.low = low
-		self.startTime = time.time()
+		self.startTime = startTime
 		self.period = period
 		self.output = BotLog()
 		self.priceAverage = priceAverage
@@ -37,4 +37,3 @@ class BotCandlestick(object):
 			return True
 		else:
 			return False
-

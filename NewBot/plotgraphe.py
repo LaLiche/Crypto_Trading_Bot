@@ -16,7 +16,7 @@ class PlotGraphe(object):
         close_data = []
         high_data = []
         low_data = []
-        x_data = [self.chart.startTime + i*self.chart.period for i in range(0,int((self.chart.endTime-self.chart.startTime)//self.chart.period))]
+        x_data = []
 
 
         for c in self.chart.data:
@@ -24,6 +24,7 @@ class PlotGraphe(object):
             close_data.append(c.close)
             high_data.append(c.high)
             low_data.append(c.low)
+            x_data.append(c.startTime)
 
         trace = plotly.graph_objs.Candlestick(
             x = x_data,
