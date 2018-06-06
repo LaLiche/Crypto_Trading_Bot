@@ -3,6 +3,7 @@ import urllib, json
 import pprint
 from botcandlestick import BotCandlestick
 
+
 class BotChart(object):
 	def __init__(self, exchange, pair, period, backtest=True):
 		self.pair = pair
@@ -12,7 +13,7 @@ class BotChart(object):
 		self.endTime = 1491591200
 
 		self.data = []
-		
+
 		if (exchange == "poloniex"):
 			self.conn = poloniex('key goes here','Secret goes here')
 
