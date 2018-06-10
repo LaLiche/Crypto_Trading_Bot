@@ -20,7 +20,7 @@ class BotStrategy(object):
 		#self.closes.append(self.currentClose)
 		self.output.log("Price: "+str(candlestick.priceAverage)+"\tMoving expAverage: "+str(self.indicators.expAverage.average))
 		self.evaluatePositions(candlestick)
-		self.updateOpenTrades()
+		self.updateOpenTrades(candlestick)
 		self.showPositions()
 
 	def evaluatePositions(self,candlestick):
@@ -38,10 +38,10 @@ class BotStrategy(object):
 			if self.conditionClose(self.prices,candlestick):
 				trade.close(self.currentPrice)
 
-	def updateOpenTrades(self):
+	def updateOpenTrades(self,candlestick):
 		for trade in self.trades:
 			if (trade.status == "OPEN"):
-				trade.tick(self.currentPrice)
+				trade.tick(self.currentPrice,candlestick)
 
 	def showPositions(self):
 		for trade in self.trades:

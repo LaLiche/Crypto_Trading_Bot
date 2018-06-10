@@ -12,8 +12,8 @@ def main(argv):
 	for candlestick in chart.getPoints():
 		strategy.tick(candlestick)
 
-	graphe = PlotGraphe(chart)
-	graphe.plotchart()
+	graphe = PlotGraphe(chart,strategy)
+	graphe.plotChart()
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
