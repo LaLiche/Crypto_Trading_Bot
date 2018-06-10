@@ -9,8 +9,8 @@ def main(argv):
 
 	strategy = BotStrategy()
 
-	# for candlestick in chart.getPoints():  Uncomment pour test la strategie
-		# strategy.tick(candlestick)
+	for candlestick in chart.getPoints():
+		strategy.tick(candlestick)
 
 	graphe = PlotGraphe(chart)
 	graphe.plotchart()
