@@ -9,14 +9,13 @@ class PlotGraphe(object):
     def __init__(self,chart,strategy):
         self.chart = chart
         self.strategy = strategy
-        # self.indicateurs = BotIndicators()
 
 
     def plotRsi(self,prices,temps):
 
         RSI_data = [50]
         for i in range(1,len(prices)):
-            RSI_data.append(self.strategy.indicators.rsi.currentRSI);
+            RSI_data.append(self.strategy.indicators.RSI(prices[:i]));
         RSI_data.append(50)
 
         rsi = plotly.graph_objs.Scatter(

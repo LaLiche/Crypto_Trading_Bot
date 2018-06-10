@@ -1,28 +1,13 @@
 import numpy
-from rsi import rsi
 from expAverage import expAverage
 from pointPivot import pointPivot
 
 class BotIndicators(object):
 	def __init__(self):
-		self.rsi = rsi()
-		self.expAverage = expAverage(10)
-		self.pointPivot = pointPivot()
+		self.expAverage = 0
+		pass
 
-	def conditionOpen(self, prices, candlestick):
-		self.expAverage.computeAverage(prices,candlestick)
-		if candlestick.close > self.expAverage.average and candlestick.close > self.pointPivot.pivot:
-			if self.rsi.conditionOpen(prices):
-				return True
-		return False
-
-	def conditionClose(self, prices, candlestick):
-		if candlestick.close < expAverage.average and candlestick.close < pointPivot.pivot:
-			if rsi.conditionClose(prices):
-				return True
-		return False
-
-	def momentum (self, dataPoints, period=14):
+	def momentum(self, dataPoints, period=14):
 		if (len(dataPoints) > period -1):
 			return dataPoints[-1] * 100 / dataPoints[-period]
 
@@ -41,7 +26,7 @@ class BotIndicators(object):
 		emafast = self.EMA(prices, nfast)
 		return emaslow, emafast, emafast - emaslow
 
-	def RSI (self, prices, period=14):
+	def RSI(self, prices, period=14):
 		deltas = numpy.diff(prices)
 		seed = deltas[:period+1]
 		up = seed[seed >= 0].sum()/period
@@ -69,3 +54,16 @@ class BotIndicators(object):
  			return rsi[-1]
  		else:
  			return 50 # output a neutral amount until enough prices in list to calculate RSI
+
+	def computeExpAverage(self,prices,candlestick,nbPeriod):
+		if self.expAverage != 0:
+			self.expAverage = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*self.expAverage
+		else:
+			self.expAverage = candlestick.close
+		return self.expAverage
+
+	def simpleAverage(self,prices,nbPeriod):
+	 	return sum(prices[-nbPeriod:]) / float(len(prices[-nbPeriod:]))
+
+	def pointPivot(self,candlestick):
+		return (candlestick.high + candlestick.low + candlestick.close)/float(3)

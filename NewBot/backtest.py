@@ -3,11 +3,12 @@ import sys, getopt
 from botchart import BotChart
 from botstrategy import BotStrategy
 from plotgraphe import PlotGraphe
+from stratRsi import stratRsi
 
 def main(argv):
-	chart = BotChart("poloniex","BTC_XMR",300,'2017-04-01 14:00:00','2017-04-07 20:53:20')
+	chart = BotChart("poloniex","BTC_XMR",300,'2017-04-01 14:00:00','2017-06-07 20:53:20')
 
-	strategy = BotStrategy()
+	strategy = stratRsi()
 
 	for candlestick in chart.getPoints():
 		strategy.tick(candlestick)

@@ -11,14 +11,13 @@ class BotStrategy(object):
 		self.currentPrice = ""
 		self.currentClose = ""
 		self.numSimulTrades = 1
-		self.indicators = BotIndicators() #
+		self.indicators = BotIndicators()
 
 	def tick(self,candlestick):
 		self.currentPrice = float(candlestick.close)
 		self.prices.append(self.currentPrice)
 		#self.currentClose = float(candlestick['close'])
 		#self.closes.append(self.currentClose)
-		self.output.log("Price: "+str(candlestick.priceAverage)+"\tMoving expAverage: "+str(self.indicators.expAverage.average))
 		self.evaluatePositions(candlestick)
 		self.updateOpenTrades(candlestick)
 		self.showPositions()
@@ -29,13 +28,13 @@ class BotStrategy(object):
 		for trade in self.trades:
 			if (trade.status == "OPEN"):
 				openTrades.append(trade)
-
 		if (len(openTrades) < self.numSimulTrades):
-			if self.indicators.conditionOpen(self.prices,candlestick):
-				self.trades.append(BotTrade(self.currentPrice,stopLoss=.0001))
+			if self.conditionOpen(candlestick):
+				print("open")
+				self.trades.append(BotTrade(self.currentPrice,candlestick.startTime,stopLoss=.0001))
 
 		for trade in openTrades:
-			if self.conditionClose(self.prices,candlestick):
+			if self.conditionClose(candlestick):
 				trade.close(self.currentPrice)
 
 	def updateOpenTrades(self,candlestick):
@@ -46,3 +45,9 @@ class BotStrategy(object):
 	def showPositions(self):
 		for trade in self.trades:
 			trade.showTrade()
+
+	def conditionOpen(self,candlestick):
+		raise NotImplementedError
+
+	def conditionClose(self,candlestick):
+		raise NotImplementedError
