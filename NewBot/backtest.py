@@ -9,11 +9,11 @@ def main(argv):
 
 	strategy = BotStrategy()
 
-	# for candlestick in chart.getPoints():  Uncomment pour test la strategie
-		# strategy.tick(candlestick)
+	for candlestick in chart.getPoints():  #Uncomment pour test la strategie
+		 strategy.tick(candlestick)
 
-	graphe = PlotGraphe(chart)
-	graphe.plotchart()
+	graphe = PlotGraphe(chart,strategy)
+	graphe.plotChart()
 
 if __name__ == "__main__":
 	main(sys.argv[1:])

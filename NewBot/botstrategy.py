@@ -16,17 +16,17 @@ class BotStrategy(object):
 	def tick(self,candlestick):
 		self.currentPrice = float(candlestick.priceAverage)
 		self.prices.append(self.currentPrice)
-		
+
 		#self.currentClose = float(candlestick['close'])
 		#self.closes.append(self.currentClose)
-		
+
 		self.output.log("Price: "+str(candlestick.priceAverage)+"\tMoving Average: "+str(self.indicators.movingAverage(self.prices,15)))
 
-		self.evaluatePositions()
-		self.updateOpenTrades()
+		self.evaluatePositions(candlestick)
+		self.updateOpenTrades(candlestick)
 		self.showPositions()
 
-	def evaluatePositions(self):
+	def evaluatePositions(self,candlestick):
 		openTrades = []
 		for trade in self.trades:
 			if (trade.status == "OPEN"):
@@ -34,19 +34,17 @@ class BotStrategy(object):
 
 		if (len(openTrades) < self.numSimulTrades):
 			if (self.currentPrice < self.indicators.movingAverage(self.prices,15)):
-				self.trades.append(BotTrade(self.currentPrice,stopLoss=.0001))
+				self.trades.append(BotTrade(self.currentPrice,candlestick.startTime,stopLoss=.0001))
 
 		for trade in openTrades:
 			if (self.currentPrice > self.indicators.movingAverage(self.prices,15)):
-				trade.close(self.currentPrice)
+				trade.close(self.currentPrice,candlestick.startTime)
 
-	def updateOpenTrades(self):
+	def updateOpenTrades(self,candlestick):
 		for trade in self.trades:
 			if (trade.status == "OPEN"):
-				trade.tick(self.currentPrice)
+				trade.tick(self.currentPrice,candlestick)
 
 	def showPositions(self):
 		for trade in self.trades:
 			trade.showTrade()
-
-		
