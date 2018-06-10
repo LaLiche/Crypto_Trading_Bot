@@ -1,6 +1,4 @@
 import numpy
-from expAverage import expAverage
-from pointPivot import pointPivot
 
 class BotIndicators(object):
 	def __init__(self):

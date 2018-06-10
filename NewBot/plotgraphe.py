@@ -1,7 +1,6 @@
 import plotly
 from botchart import BotChart
 import timetranslate as tt
-from botindicators import BotIndicators
 from botstrategy import BotStrategy
 
 
@@ -59,7 +58,7 @@ class PlotGraphe(object):
 
     def plotPortfolio(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
-        portfolioValue = [trade_entry_data[0]]
+        portfolioValue = [0]
         all_trade_time = [tt.FloattoTime(self.chart.startTime)]
 
         j = 0

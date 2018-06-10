@@ -1,14 +1,11 @@
-
-
 import numpy as np
-from abstractIndicator import abstractIndicator
 from botstrategy import BotStrategy
 
 class stratRsi(BotStrategy):
     def __init__(self):
         super(stratRsi,self).__init__()
         self.zone = 0 # 0 : pas de zones, 1 : zone 1, 2 : zone 2, 3 : zone 3
-        self.priceZ1 = 99999
+        self.priceZ1 = 9999999999
         self.rsiZ2 = 0
         self.memory = 20
         self.countOpen = 0
