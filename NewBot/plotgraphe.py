@@ -37,6 +37,36 @@ class PlotGraphe(object):
 
         return rsi,rsi_min,rsi_max
 
+    def plotBollinger(self,prices,temps):
+        bollSup_data = [prices[0]]
+        boll_data = [prices[0]]
+        bollInf_data = [prices[0]]
+        for i in range(1,len(prices)):
+            bollSup_data.append(self.strategy.indicators.bollinger(prices[:i])[2])
+            boll_data.append(self.strategy.indicators.bollinger(prices[:i])[1])
+            bollInf_data.append(self.strategy.indicators.bollinger(prices[:i])[0])
+
+        bollSup = plotly.graph_objs.Scatter(
+        x = temps,
+        y = bollSup_data,
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+
+        boll = plotly.graph_objs.Scatter(
+        x = temps,
+        y = boll_data,
+        fill='tonexty',
+        fillcolor = 'rgba(0,255,50,0.05)',
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+        bollInf = plotly.graph_objs.Scatter(
+        x = temps,
+        y = bollInf_data,
+        fill='tonexty',
+        fillcolor = 'rgba(0,255,50,0.05)',
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+        return bollSup,boll,bollInf
 
     def plotTrade(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
@@ -118,6 +148,7 @@ class PlotGraphe(object):
         rsi,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
         portfolio = [self.plotPortfolio(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)]
+        bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
 
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
@@ -130,6 +161,9 @@ class PlotGraphe(object):
 
         fig = plotly.tools.make_subplots(rows=2, cols=1,shared_xaxes=True)
         fig.append_trace(trace, 1, 1)
+        fig.append_trace(bollingerSup,1,1)
+        fig.append_trace(bollinger,1,1)
+        fig.append_trace(bollingerInf,1,1)
         fig.append_trace(entryPoint, 1, 1)
         fig.append_trace(exitPoint, 1, 1)
         fig.append_trace(rsi, 2, 1)
