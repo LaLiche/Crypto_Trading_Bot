@@ -65,3 +65,11 @@ class BotIndicators(object):
 
 	def pointPivot(self,candlestick):
 		return (candlestick.high + candlestick.low + candlestick.close)/float(3)
+
+	def bollinger(self,prices,nbPeriod):
+		movingAverage = self.simpleAverage(prices,nbPeriod)
+		sigma = 0
+		for k in range(1,nbPeriod+1):
+			sum += (prices[-k] - movingAverage)**2
+		sigma = numpy.sqrt(sigma/float(n))
+		return [movingAverage - 2*sigma,movingAverage,movingAverage + 2*sigma]

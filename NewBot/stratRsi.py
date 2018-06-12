@@ -7,9 +7,10 @@ class stratRsi(BotStrategy):
         self.zone = 0 # 0 : pas de zones, 1 : zone 1, 2 : zone 2, 3 : zone 3
         self.priceZ1 = 9999999999
         self.rsiZ2 = 0
-        self.memory = 20
+        self.memory = 50
         self.countOpen = 0
         self.countClose = 0
+        self.distanceMin = 15
 
     def condRsiOpen(self):
         rsi = self.indicators.RSI(self.prices)
@@ -22,8 +23,10 @@ class stratRsi(BotStrategy):
                 self.zone = 2
         elif self.zone == 2:
             self.rsiZ2 = maxi(rsi,self.rsiZ2) # on stocke le rsi de la zone 2
-            if self.prices[-1] < self.priceZ1: # divergence : on passe en zone 3
+            if self.prices[-1] < self.priceZ1 and self.countOpen <= self.distanceMin: # divergence : on passe en zone 3
                 self.zone = 3
+            if rsi > 60: # on reset si le rsi remonte trop
+                self.resetOpen()
         elif self.zone == 3:
             if rsi > self.rsiZ2: # achat
                 self.resetOpen()
@@ -46,9 +49,11 @@ class stratRsi(BotStrategy):
                 self.rsiZ2 = rsi
                 self.zone = 2
         elif self.zone == 2:
-            self.rsiZ2 = mini(self.currenRSI,self.rsiZ2) # on stocke le rsi de la zone 2
-            if self.prices[-1] > self.priceZ1: # divergence : on passe en zone 3
+            self.rsiZ2 = mini(rsi,self.rsiZ2) # on stocke le rsi de la zone 2
+            if self.prices[-1] > self.priceZ1 and self.countClose <= self.distanceMin: # divergence : on passe en zone 3
                 self.zone = 3
+            if rsi < 40: # on reset si le rsi descend trop
+                self.resetOpen()
         elif self.zone == 3:
             if rsi > self.rsiZ2: #on passe en zone 4
                 self.resetClose()
@@ -77,15 +82,17 @@ class stratRsi(BotStrategy):
         self.priceZ1 = 0
 
     def conditionOpen(self,candlestick):
-        if candlestick.close > self.indicators.computeExpAverage(self.prices,candlestick,10) and candlestick.close > self.indicators.pointPivot(candlestick):
-            if self.condRsiOpen():
-                return True
+        # if candlestick.close > self.indicators.computeExpAverage(self.prices,candlestick,10) and candlestick.close > self.indicators.pointPivot(candlestick):
+        if self.condRsiOpen():
+            return True
         return False
 
-    def conditionClose(self,candlestick):
-        if candlestick.close < self.indicators.computeExpAverage(self.prices,candlestick,10) and candlestick.close < self.indicators.pointPivot(candlestick):
-            if self.condRsiClose():
-				return True
+    def conditionClose(self,candlestick,trade):
+        # if candlestick.close < self.indicators.computeExpAverage(self.prices,candlestick,10) and candlestick.close < self.indicators.pointPivot(candlestick):
+        pdv = 1.1*trade.entryPrice
+        print("current price " + str(self.prices[-1]) + " on devrait vendre a "+str(pdv) + "(prix courant = " + str(trade.entryPrice) + ")")
+        if self.condRsiClose() or self.prices[-1]>pdv:
+			return True
         return False
 
 def maxi(a,b):

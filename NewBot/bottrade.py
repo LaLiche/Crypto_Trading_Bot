@@ -9,8 +9,9 @@ class BotTrade(object):
 		self.startTime = startTime
 		self.exitTime = 0.
 		self.output.log("Trade opened")
-		if (stopLoss):
-			self.stopLoss = currentPrice - stopLoss
+		self.stopLoss = stopLoss
+		# if (stopLoss):
+			# self.stopLoss = currentPrice - stopLoss
 
 	def close(self,currentPrice,endTime):
 		self.status = "CLOSED"
@@ -20,7 +21,7 @@ class BotTrade(object):
 
 	def tick(self, currentPrice,candlestick):
 		if (self.stopLoss):
-			if (currentPrice < self.stopLoss):
+			if (currentPrice < (1-self.stopLoss)*self.entryPrice):
 				self.close(currentPrice,candlestick.startTime)
 
 
@@ -36,4 +37,4 @@ class BotTrade(object):
 
 			tradeStatus = tradeStatus+str(self.exitPrice - self.entryPrice)+"\033[0m"
 
-		self.output.log(tradeStatus)
+		# self.output.log(tradeStatus)
