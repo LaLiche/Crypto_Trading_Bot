@@ -200,4 +200,4 @@ class PlotGraphe(object):
         fig.append_trace(rsi_max, 2, 1)
         fig['layout']=layout
         plotly.offline.plot(fig,filename='graphe.html')
-        plotly.offline.plot(portfolio,filename='portfolio.html')
+        # plotly.offline.plot(portfolio,filename='portfolio.html')

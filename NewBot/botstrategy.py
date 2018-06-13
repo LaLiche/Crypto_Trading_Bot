@@ -12,7 +12,7 @@ class BotStrategy(object):
 		self.currentPrice = ""
 		self.numSimulTrades = 1
 		self.indicators = BotIndicators()
-		self.stopLoss = 0.03
+		self.stopLoss = 0.0
 
 	def tick(self,candlestick):
 		self.currentPrice = float(candlestick.close)
@@ -31,7 +31,7 @@ class BotStrategy(object):
 				openTrades.append(trade)
 		if (len(openTrades) < self.numSimulTrades):
 			if self.conditionOpen(candlestick):
-				self.trades.append(BotTrade(self.currentPrice,candlestick.startTime,stopLoss=.0001))
+				self.trades.append(BotTrade(self.currentPrice,candlestick.startTime,self.stopLoss))
 		for trade in openTrades:
 			if self.conditionClose(candlestick,trade):
 				trade.close(self.currentPrice,candlestick.startTime)

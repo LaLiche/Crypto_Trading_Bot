@@ -6,7 +6,7 @@ from plotgraphe import PlotGraphe
 from stratRsi import stratRsi
 
 def main(argv):
-	chart = BotChart("poloniex","BTC_ETH",86400,'2017-01-01 14:00:00','2017-12-12 20:53:20')
+	chart = BotChart("poloniex","BTC_ETH",1800,'2017-11-01 14:00:00','2017-12-12 20:53:20')
 
 	strategy = stratRsi()
 
