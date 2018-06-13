@@ -17,7 +17,7 @@ class stratRsi(BotStrategy):
         rsi = self.indicators.RSI(self.prices)
         if self.countOpen > self.memory:
             self.resetOpen()
-        if self.zone == 1 :
+        if self.zone == 1:
             self.rsiZ1 = mini(rsi,self.priceZ1)
             self.priceZ1 = mini(self.currentPrice,self.priceZ1) # on stocke le prix minimal
             if rsi > 30: #on passe en zone 2
@@ -31,6 +31,7 @@ class stratRsi(BotStrategy):
                 self.resetOpen()
         elif self.zone == 3:
             if rsi > self.rsiZ2: # achat
+                print(self.rsiZ2)
                 self.resetOpen()
                 return True
         else:
@@ -94,7 +95,7 @@ class stratRsi(BotStrategy):
     def conditionClose(self,candlestick,trade):
         # if candlestick.close < self.indicators.computeExpAverage(self.prices,candlestick,10) and candlestick.close < self.indicators.pointPivot(candlestick):
         pdv = 1.1*trade.entryPrice
-        print("current price " + str(self.prices[-1]) + " on devrait vendre a "+str(pdv) + "(prix courant = " + str(trade.entryPrice) + ")")
+        #print("current price " + str(self.prices[-1]) + " on devrait vendre a "+str(pdv) + "(prix courant = " + str(trade.entryPrice) + ")")
         if self.condRsiClose() or self.prices[-1]>pdv:
 			return True
         return False

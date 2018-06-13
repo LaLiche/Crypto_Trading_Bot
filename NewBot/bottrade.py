@@ -22,6 +22,7 @@ class BotTrade(object):
 	def tick(self, currentPrice,candlestick):
 		if (self.stopLoss):
 			if (currentPrice < (1-self.stopLoss)*self.entryPrice):
+				print("vendu par stopLoss")
 				self.close(currentPrice,candlestick.startTime)
 
 
