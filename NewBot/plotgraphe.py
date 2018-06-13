@@ -68,7 +68,7 @@ class PlotGraphe(object):
         )
         return bollSup,boll,bollInf
 
-    def plotIchimoku(self,high,low,temps):
+    def plotIchimoku(self,high,low,tempsA,tempsB):
         senkou_span_A_data =[]
         senkou_span_B_data =[]
         for i in range(1,len(high)):
@@ -76,17 +76,17 @@ class PlotGraphe(object):
             senkou_span_B_data.append(self.strategy.indicators.ichimoku(high[:i],low[:i])[1])
 
         span_A = plotly.graph_objs.Scatter(
-        x = temps,
+        x = tempsA,
         y = senkou_span_A_data,
-        fill='tozeros',
-        fillcolor = 'rgba(0,255,150,0.5)',
-        marker = dict(color= 'rgb(255,0,50)')
+        marker = dict(color= 'rgb(0,0,250)')
         )
 
         span_B = plotly.graph_objs.Scatter(
-        x = temps,
+        x = tempsB,
         y = senkou_span_B_data,
-        marker = dict(color= 'rgb(0,0,255)')
+        fill='tonexty',
+        fillcolor = 'rgba(150,0,155,0.1)',
+        marker = dict(color= 'rgb(255,0,0)')
         )
         return span_A,span_B
 
@@ -146,7 +146,8 @@ class PlotGraphe(object):
         high_data = []
         low_data = []
         x_data = []
-        x_data_ichimoku =[]
+        x_data_ichimokuA =[]
+        x_data_ichimokuB =[]
         trade_entry_data = []
         trade_entry_time = []
         trade_exit_data = []
@@ -159,7 +160,8 @@ class PlotGraphe(object):
             high_data.append(c.high)
             low_data.append(c.low)
             x_data.append(tt.FloattoTime(c.startTime))
-            x_data_ichimoku.append(tt.FloattoTime(c.startTime+26*self.chart.period))
+            x_data_ichimokuA.append(tt.FloattoTime(c.startTime+14*self.chart.period))
+            x_data_ichimokuB.append(tt.FloattoTime(c.startTime+26*self.chart.period))
 
         for trade in self.strategy.trades:
             trade_entry_data.append(trade.entryPrice*0.9)
@@ -173,7 +175,7 @@ class PlotGraphe(object):
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
         portfolio = [self.plotPortfolio(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)]
         bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
-        span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimoku)
+        span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimokuA,x_data_ichimokuB)
 
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
