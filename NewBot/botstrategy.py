@@ -6,10 +6,10 @@ class BotStrategy(object):
 	def __init__(self):
 		self.output = BotLog()
 		self.prices = []
-		self.closes = [] # Needed for Momentum Indicator
+		self.high = []
+		self.low = []
 		self.trades = []
 		self.currentPrice = ""
-		self.currentClose = ""
 		self.numSimulTrades = 1
 		self.indicators = BotIndicators()
 		self.stopLoss = 0.03
@@ -17,8 +17,8 @@ class BotStrategy(object):
 	def tick(self,candlestick):
 		self.currentPrice = float(candlestick.close)
 		self.prices.append(self.currentPrice)
-		#self.currentClose = float(candlestick['close'])
-		#self.closes.append(self.currentClose)
+		self.high.append(candlestick.high)
+		self.low.append(candlestick.low)
 		self.evaluatePositions(candlestick)
 		self.updateOpenTrades(candlestick)
 		self.showPositions()

@@ -70,6 +70,8 @@ class BotIndicators(object):
 		movingAverage = self.simpleAverage(prices,nbPeriod)
 		sigma = 0
 		for k in range(1,nbPeriod+1):
-			sum += (prices[-k] - movingAverage)**2
+			sigma += (prices[-k] - movingAverage)**2
 		sigma = numpy.sqrt(sigma/float(n))
 		return [movingAverage - 2*sigma,movingAverage,movingAverage + 2*sigma]
+
+	def ichimoku(self,low,prices,high,param1 = 9,param2 = 26, param3 = 52)
