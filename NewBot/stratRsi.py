@@ -25,8 +25,12 @@ class stratRsi(BotStrategy):
                 self.zone = 2
         elif self.zone == 2:
             self.rsiZ2 = maxi(rsi,self.rsiZ2) # on stocke le rsi de la zone 2
-            if self.currentPrice < self.priceZ1 and rsi > self.rsiZ1 and rsi < 30 and self.countOpen >= self.distanceMin: # divergence : on passe en zone 3
-                self.zone = 3
+            if rsi < 30:
+                if self.currentPrice < self.priceZ1 and rsi > self.rsiZ1 and self.countOpen >= self.distanceMin: # divergence : on passe en zone 3
+                    self.zone = 3
+                else:
+                    self.resetOpen()
+                    self.zone = 1
             if rsi > 60: # on reset si le rsi remonte trop
                 self.resetOpen()
         elif self.zone == 3:
@@ -54,10 +58,14 @@ class stratRsi(BotStrategy):
                 self.zone = 2
         elif self.zone == 2:
             self.rsiZ2 = mini(rsi,self.rsiZ2) # on stocke le rsi de la zone 2
-            if self.currentPrice > self.priceZ1 and rsi < self.rsiZ1 and rsi > 70 and self.countClose >= self.distanceMin: # divergence : on passe en zone 3
-                self.zone = 3
+            if rsi > 70:
+                if self.currentPrice > self.priceZ1 and rsi < self.rsiZ1 and self.countClose >= self.distanceMin: # divergence : on passe en zone 3
+                    self.zone = 3
+                else:
+                    self.resetClose()
+                    self.zone = 1
             if rsi < 40: # on reset si le rsi descend trop
-                self.resetOpen()
+                self.resetClose()
         elif self.zone == 3:
             if rsi > self.rsiZ2: #on passe en zone 4
                 self.resetClose()

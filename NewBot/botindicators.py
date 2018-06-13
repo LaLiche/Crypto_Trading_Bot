@@ -53,7 +53,7 @@ class BotIndicators(object):
   		if len(prices) > period:
  			return rsi[-1]
  		else:
- 			return 50 # output a neutral amount until enough prices in list to calculate RSI
+ 			return rsi[-1] # output a neutral amount until enough prices in list to calculate RSI
 
 	def computeExpAverage(self,prices,candlestick,nbPeriod):
 		if self.expAverage != 0:
