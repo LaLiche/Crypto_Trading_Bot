@@ -8,7 +8,8 @@ class stratRsi(BotStrategy):
         self.priceZ1 = 9999999999
         self.rsiZ1 = 100
         self.rsiZ2 = 0
-        self.memory = 50
+        self.rsiZ3 = 100
+        self.memory = 100
         self.countOpen = 0
         self.countClose = 0
         self.distanceMin = 15
@@ -18,29 +19,36 @@ class stratRsi(BotStrategy):
         if self.countOpen > self.memory:
             self.resetOpen()
         if self.zone == 1:
-            self.rsiZ1 = mini(rsi,self.priceZ1)
+            self.rsiZ1 = mini(rsi,self.rsiZ1)
             self.priceZ1 = mini(self.currentPrice,self.priceZ1) # on stocke le prix minimal
-            if rsi > 30: #on passe en zone 2
+            if rsi > 35: #on passe en zone 2
                 self.rsiZ2 = rsi
                 self.zone = 2
         elif self.zone == 2:
             self.rsiZ2 = maxi(rsi,self.rsiZ2) # on stocke le rsi de la zone 2
+
             if rsi < 30:
                 if self.currentPrice < self.priceZ1 and rsi > self.rsiZ1 and self.countOpen >= self.distanceMin: # divergence : on passe en zone 3
                     self.zone = 3
                 else:
                     self.resetOpen()
                     self.zone = 1
-            if rsi > 60: # on reset si le rsi remonte trop
+            if rsi > 65: # on reset si le rsi remonte trop
                 self.resetOpen()
         elif self.zone == 3:
+            self.rsiZ3 = min(rsi,self.rsiZ3)
             if rsi > self.rsiZ2: # achat
+                print "allo"
+                print self.rsiZ3,self.rsiZ1
                 print(self.rsiZ2)
                 self.resetOpen()
                 return True
+            elif self.rsiZ3 < self.rsiZ1:
+                self.resetOpen()
+                self.zone = 1
         else:
             if rsi < 30:
-                self.countOpen = 0
+                self.resetOpen()
                 self.zone = 1
         if self.zone != 0:
             self.countOpen += 1
@@ -85,6 +93,7 @@ class stratRsi(BotStrategy):
         self.rsiZ2 = 0
         self.priceZ1 = 999999
         self.rsiZ1 = 100
+        self.rsiZ3 = 100
 
     def resetClose(self):
         self.countOpen = 0
