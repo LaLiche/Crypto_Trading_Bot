@@ -160,7 +160,7 @@ class PlotGraphe(object):
             high_data.append(c.high)
             low_data.append(c.low)
             x_data.append(tt.FloattoTime(c.startTime))
-            x_data_ichimokuA.append(tt.FloattoTime(c.startTime+14*self.chart.period))
+            x_data_ichimokuA.append(tt.FloattoTime(c.startTime+26*self.chart.period))
             x_data_ichimokuB.append(tt.FloattoTime(c.startTime+26*self.chart.period))
 
         for trade in self.strategy.trades:
