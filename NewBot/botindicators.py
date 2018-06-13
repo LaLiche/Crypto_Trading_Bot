@@ -3,6 +3,8 @@ import numpy
 class BotIndicators(object):
 	def __init__(self):
 		self.expAverage = 0
+		self.tenkan_sen = []
+		self.kijun_sen = []
 		pass
 
 	def momentum(self, dataPoints, period=14):
@@ -74,3 +76,30 @@ class BotIndicators(object):
 			sigma += (prices[-k] - movingAverage)**2
 		sigma = numpy.sqrt(sigma/float(nbPeriod))
 		return [movingAverage - coeff*sigma,movingAverage,movingAverage + coeff*sigma]
+
+	def ichimoku(self,high,low):
+		if len(high) >= 9:
+			high_9 = max(high[-9:])
+			low_9 = min(low[-9:])
+		else:
+			high_9 = max(high)
+			low_9 = min(low)
+
+		self.tenkan_sen.append((high_9+low_9)/2)
+
+		if len(high) >= 26:
+			high_26 = max(high[-26:])
+			low_26 = min(low[-26:])
+		else:
+			high_26 = max(high)
+			low_26 = min(low)
+
+		self.kijun_sen.append((high_26+low_26)/2)
+
+		if len(high) >= 52:
+			senkou_span_A = (self.tenkan_sen[-26]+self.kijun_sen[-26])/2
+			senkou_span_B = (max(high[-52:])+min(low[-52:]))/2
+		else:
+			senkou_span_A = (self.tenkan_sen[0]+self.kijun_sen[0])/2
+			senkou_span_B = (max(high)+min(low))/2
+		return [senkou_span_A,senkou_span_B]
