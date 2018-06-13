@@ -37,6 +37,58 @@ class PlotGraphe(object):
 
         return rsi,rsi_min,rsi_max
 
+    def plotBollinger(self,prices,temps):
+        bollSup_data = [prices[0]]
+        boll_data = [prices[0]]
+        bollInf_data = [prices[0]]
+        for i in range(1,len(prices)):
+            bollSup_data.append(self.strategy.indicators.bollinger(prices[:i])[2])
+            boll_data.append(self.strategy.indicators.bollinger(prices[:i])[1])
+            bollInf_data.append(self.strategy.indicators.bollinger(prices[:i])[0])
+
+        bollSup = plotly.graph_objs.Scatter(
+        x = temps,
+        y = bollSup_data,
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+
+        boll = plotly.graph_objs.Scatter(
+        x = temps,
+        y = boll_data,
+        fill='tonexty',
+        fillcolor = 'rgba(0,255,50,0.05)',
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+        bollInf = plotly.graph_objs.Scatter(
+        x = temps,
+        y = bollInf_data,
+        fill='tonexty',
+        fillcolor = 'rgba(0,255,50,0.05)',
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+        return bollSup,boll,bollInf
+
+    def plotIchimoku(self,high,low,temps):
+        senkou_span_A_data =[]
+        senkou_span_B_data =[]
+        for i in range(1,len(high)):
+            senkou_span_A_data.append(self.strategy.indicators.ichimoku(high[:i],low[:i])[0])
+            senkou_span_B_data.append(self.strategy.indicators.ichimoku(high[:i],low[:i])[1])
+
+        span_A = plotly.graph_objs.Scatter(
+        x = temps,
+        y = senkou_span_A_data,
+        fill='tozeros',
+        fillcolor = 'rgba(0,255,150,0.5)',
+        marker = dict(color= 'rgb(255,0,50)')
+        )
+
+        span_B = plotly.graph_objs.Scatter(
+        x = temps,
+        y = senkou_span_B_data,
+        marker = dict(color= 'rgb(0,0,255)')
+        )
+        return span_A,span_B
 
     def plotTrade(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
@@ -94,6 +146,7 @@ class PlotGraphe(object):
         high_data = []
         low_data = []
         x_data = []
+        x_data_ichimoku =[]
         trade_entry_data = []
         trade_entry_time = []
         trade_exit_data = []
@@ -106,6 +159,7 @@ class PlotGraphe(object):
             high_data.append(c.high)
             low_data.append(c.low)
             x_data.append(tt.FloattoTime(c.startTime))
+            x_data_ichimoku.append(tt.FloattoTime(c.startTime+26*self.chart.period))
 
         for trade in self.strategy.trades:
             trade_entry_data.append(trade.entryPrice*0.9)
@@ -118,6 +172,8 @@ class PlotGraphe(object):
         rsi,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
         portfolio = [self.plotPortfolio(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)]
+        bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
+        span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimoku)
 
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
@@ -130,8 +186,13 @@ class PlotGraphe(object):
 
         fig = plotly.tools.make_subplots(rows=2, cols=1,shared_xaxes=True)
         fig.append_trace(trace, 1, 1)
+        fig.append_trace(bollingerSup,1,1)
+        fig.append_trace(bollinger,1,1)
+        fig.append_trace(bollingerInf,1,1)
         fig.append_trace(entryPoint, 1, 1)
         fig.append_trace(exitPoint, 1, 1)
+        fig.append_trace(span_A, 1, 1)
+        fig.append_trace(span_B, 1, 1)
         fig.append_trace(rsi, 2, 1)
         fig.append_trace(rsi_min, 2, 1)
         fig.append_trace(rsi_max, 2, 1)
