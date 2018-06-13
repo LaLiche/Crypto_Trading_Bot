@@ -36,7 +36,7 @@ class stratRsi(BotStrategy):
             if rsi > 65: # on reset si le rsi remonte trop
                 self.resetOpen()
         elif self.zone == 3:
-            self.rsiZ3 = min(rsi,self.rsiZ3)
+            self.rsiZ3 = mini(rsi,self.rsiZ3)
             if rsi > self.rsiZ2: # achat
                 self.resetOpen()
                 return True
@@ -69,7 +69,7 @@ class stratRsi(BotStrategy):
                 else:
                     self.resetClose()
                     self.zone = 1
-            if rsi < 40: # on reset si le rsi descend trop
+            if rsi < 35: # on reset si le rsi descend trop
                 self.resetClose()
         elif self.zone == 3:
             self.rsiZ3 = maxi(rsi,self.rsiZ3)
@@ -81,7 +81,7 @@ class stratRsi(BotStrategy):
                 self.zone = 1
         else:
             if rsi > 70:
-                self.countClose = 0
+                self.resetClose()
                 self.zone = 1
         if self.zone != 0:
             self.countClose += 1
@@ -103,6 +103,7 @@ class stratRsi(BotStrategy):
         self.rsiZ2 = 100
         self.priceZ1 = 0
         self.rsiZ1 = 0
+        self.rsiZ3 = 0
 
     def conditionOpen(self,candlestick):
         # if candlestick.close > self.indicators.computeExpAverage(self.prices,candlestick,10) and candlestick.close > self.indicators.pointPivot(candlestick):
