@@ -8,8 +8,8 @@ class BotTrade(object):
 		self.exitPrice = 0.
 		self.startTime = startTime
 		self.exitTime = 0.
-		self.output.log("Trade opened")
 		self.stopLoss = stopLoss
+		self.output.log("Trade opened: "+str(self.entryPrice)+" StopLoss: "+str(self.stopLoss))
 		# if (stopLoss):
 			# self.stopLoss = currentPrice - stopLoss
 
@@ -21,7 +21,7 @@ class BotTrade(object):
 
 	def tick(self, currentPrice,candlestick):
 		if (self.stopLoss):
-			if (currentPrice < (1-self.stopLoss)*self.entryPrice):
+			if (currentPrice < self.entryPrice - self.stopLoss):
 				print("vendu par stopLoss")
 				self.close(currentPrice,candlestick.startTime)
 
