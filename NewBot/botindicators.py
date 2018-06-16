@@ -67,3 +67,9 @@ class BotIndicators(object):
 
 	def pointPivot(self,candlestick):
 		return (candlestick.high + candlestick.low + candlestick.close)/float(3)
+
+	def stochastique(self,candlestick,low,high,nbPeriod):
+		if (len(low)>nbPeriod):
+			return 100*(candlestick.close-min(low[-nbPeriod:]))/(max(high[:nbPeriod])-min(low[-nbPeriod:]))
+		else:
+			return -1

@@ -34,7 +34,7 @@ class BotStrategy(object):
 				self.trades.append(BotTrade(self.currentPrice,candlestick.startTime,stopLoss=.0001))
 
 		for trade in openTrades:
-			if self.conditionClose(candlestick):
+			if self.conditionClose(trade):
 				trade.close(self.currentPrice)
 
 	def updateOpenTrades(self,candlestick):
@@ -49,5 +49,5 @@ class BotStrategy(object):
 	def conditionOpen(self,candlestick):
 		raise NotImplementedError
 
-	def conditionClose(self,candlestick):
+	def conditionClose(self,trade):
 		raise NotImplementedError
