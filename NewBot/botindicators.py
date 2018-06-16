@@ -4,7 +4,7 @@ from pointPivot import pointPivot
 
 class BotIndicators(object):
 	def __init__(self):
-		self.expAverage = 0
+		self.exp_Average = 0
 		pass
 
 	def momentum(self, dataPoints, period=14):
@@ -55,12 +55,12 @@ class BotIndicators(object):
  		else:
  			return 50 # output a neutral amount until enough prices in list to calculate RSI
 
-	def computeExpAverage(self,prices,candlestick,nbPeriod):
-		if self.expAverage != 0:
-			self.expAverage = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*self.expAverage
+	def expAverage(self,prices,candlestick,nbPeriod):
+		if self.exp_Average != 0:
+			self.exp_Average = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*self.exp_Average
 		else:
-			self.expAverage = candlestick.close
-		return self.expAverage
+			self.exp_Average = candlestick.close
+		return self.exp_Average
 
 	def simpleAverage(self,prices,nbPeriod):
 	 	return sum(prices[-nbPeriod:]) / float(len(prices[-nbPeriod:]))
@@ -68,8 +68,8 @@ class BotIndicators(object):
 	def pointPivot(self,candlestick):
 		return (candlestick.high + candlestick.low + candlestick.close)/float(3)
 
-	def stochastique(self,candlestick,low,high,nbPeriod):
+	def stochastique(self,prices,low,high,nbPeriod=14):
 		if (len(low)>nbPeriod):
-			return 100*(candlestick.close-min(low[-nbPeriod:]))/(max(high[:nbPeriod])-min(low[-nbPeriod:]))
+			return 100*(prices[-1]-min(low[-nbPeriod:]))/(max(high[-nbPeriod:])-min(low[-nbPeriod:]))
 		else:
 			return -1
