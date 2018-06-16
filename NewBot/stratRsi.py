@@ -107,16 +107,12 @@ class stratRsi(BotStrategy):
 
     def conditionOpen(self,candlestick):
         # if candlestick.close > self.indicators.computeExpAverage(self.prices,candlestick,10) and candlestick.close > self.indicators.pointPivot(candlestick):
-        if self.condRsiOpen():
-            return True
-        return False
+        return self.condRsiOpen()
 
     def conditionClose(self,candlestick,trade):
         # if candlestick.close < self.indicators.computeExpAverage(self.prices,candlestick,10) and candlestick.close < self.indicators.pointPivot(candlestick):
         #print("current price " + str(self.prices[-1]) + " on devrait vendre a "+str(pdv) + "(prix courant = " + str(trade.entryPrice) + ")")
-        if self.condRsiClose():
-			return True
-        return False
+        return self.condRsiClose()
 
 def maxi(a,b):
     if a > b :

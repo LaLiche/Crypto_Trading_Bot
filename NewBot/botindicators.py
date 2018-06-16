@@ -55,7 +55,7 @@ class BotIndicators(object):
  		else:
  			return rsi[-1] # output a neutral amount until enough prices in list to calculate RSI
 
-	def computeExpAverage(self,prices,candlestick,nbPeriod):
+	def expAverage(self,prices,candlestick,nbPeriod):
 		if self.expAverage != 0:
 			self.expAverage = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*self.expAverage
 		else:
@@ -110,3 +110,7 @@ class BotIndicators(object):
 			senkou_span_B = 0
 
 		return [senkou_span_A,senkou_span_B]
+
+	def stochastique(self,high,low,candlestick,nbPeriod):
+		if len(low) > nbPeriod:
+			return 100*(candlestick.close-min(low[-nbPeriod:])/(max(high[-nbPeriod:])-min(low[-nbPeriod:]))

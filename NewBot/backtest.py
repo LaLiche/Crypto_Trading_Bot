@@ -10,6 +10,8 @@ def main(argv):
 
 	strategy = stratRsi()
 
+	
+
 	for candlestick in chart.getPoints():
 		strategy.tick(candlestick)
 
