@@ -1,7 +1,6 @@
 import plotly
 from botchart import BotChart
 import timetranslate as tt
-from botindicators import BotIndicators
 from botstrategy import BotStrategy
 
 
@@ -38,6 +37,7 @@ class PlotGraphe(object):
 
         return rsi,rsi_min,rsi_max
 
+<<<<<<< HEAD
     def plotStochastique(self,prices,low,high,temps):
 
         RSI_data = [50]
@@ -65,6 +65,60 @@ class PlotGraphe(object):
 
         return rsi,rsi_min,rsi_max
 
+=======
+    def plotBollinger(self,prices,temps):
+        bollSup_data = [prices[0]]
+        boll_data = [prices[0]]
+        bollInf_data = [prices[0]]
+        for i in range(1,len(prices)):
+            bollSup_data.append(self.strategy.indicators.bollinger(prices[:i])[2])
+            boll_data.append(self.strategy.indicators.bollinger(prices[:i])[1])
+            bollInf_data.append(self.strategy.indicators.bollinger(prices[:i])[0])
+
+        bollSup = plotly.graph_objs.Scatter(
+        x = temps,
+        y = bollSup_data,
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+
+        boll = plotly.graph_objs.Scatter(
+        x = temps,
+        y = boll_data,
+        fill='tonexty',
+        fillcolor = 'rgba(0,255,50,0.05)',
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+        bollInf = plotly.graph_objs.Scatter(
+        x = temps,
+        y = bollInf_data,
+        fill='tonexty',
+        fillcolor = 'rgba(0,255,50,0.05)',
+        marker = dict(color= 'rgba(0,255,50,0.7)')
+        )
+        return bollSup,boll,bollInf
+
+    def plotIchimoku(self,high,low,tempsA,tempsB):
+        senkou_span_A_data =[]
+        senkou_span_B_data =[]
+        for i in range(1,len(high)):
+            senkou_span_A_data.append(self.strategy.indicators.ichimoku(high[:i],low[:i])[0])
+            senkou_span_B_data.append(self.strategy.indicators.ichimoku(high[:i],low[:i])[1])
+
+        span_A = plotly.graph_objs.Scatter(
+        x = tempsA,
+        y = senkou_span_A_data,
+        marker = dict(color= 'rgb(0,0,250)')
+        )
+
+        span_B = plotly.graph_objs.Scatter(
+        x = tempsB,
+        y = senkou_span_B_data,
+        fill='tonexty',
+        fillcolor = 'rgba(150,0,155,0.1)',
+        marker = dict(color= 'rgb(255,0,0)')
+        )
+        return span_A,span_B
+>>>>>>> master
 
     def plotTrade(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
@@ -86,10 +140,14 @@ class PlotGraphe(object):
 
     def plotPortfolio(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
+<<<<<<< HEAD
         if (len(trade_entry_data) > 0):
             portfolioValue = [trade_entry_data[0]]
         else:
             portfolioValue = []
+=======
+        portfolioValue = [0]
+>>>>>>> master
         all_trade_time = [tt.FloattoTime(self.chart.startTime)]
 
         j = 0
@@ -125,6 +183,8 @@ class PlotGraphe(object):
         high_data = []
         low_data = []
         x_data = []
+        x_data_ichimokuA =[]
+        x_data_ichimokuB =[]
         trade_entry_data = []
         trade_entry_time = []
         trade_exit_data = []
@@ -137,6 +197,8 @@ class PlotGraphe(object):
             high_data.append(c.high)
             low_data.append(c.low)
             x_data.append(tt.FloattoTime(c.startTime))
+            x_data_ichimokuA.append(tt.FloattoTime(c.startTime+26*self.chart.period))
+            x_data_ichimokuB.append(tt.FloattoTime(c.startTime+26*self.chart.period))
 
         for trade in self.strategy.trades:
             trade_entry_data.append(trade.entryPrice*0.9)
@@ -150,6 +212,8 @@ class PlotGraphe(object):
         st,st_min,st_max = self.plotStochastique(close_data,low_data, high_data, x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
         portfolio = [self.plotPortfolio(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)]
+        bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
+        span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimokuA,x_data_ichimokuB)
 
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
@@ -162,8 +226,13 @@ class PlotGraphe(object):
 
         fig = plotly.tools.make_subplots(rows=2, cols=1,shared_xaxes=True)
         fig.append_trace(trace, 1, 1)
+        fig.append_trace(bollingerSup,1,1)
+        fig.append_trace(bollinger,1,1)
+        fig.append_trace(bollingerInf,1,1)
         fig.append_trace(entryPoint, 1, 1)
         fig.append_trace(exitPoint, 1, 1)
+        fig.append_trace(span_A, 1, 1)
+        fig.append_trace(span_B, 1, 1)
         # fig.append_trace(rsi, 2, 1)
         # fig.append_trace(rsi_min, 2, 1)
         # fig.append_trace(rsi_max, 2, 1)
@@ -172,4 +241,4 @@ class PlotGraphe(object):
         fig.append_trace(st_max, 2, 1)
         fig['layout']=layout
         plotly.offline.plot(fig,filename='graphe.html')
-        plotly.offline.plot(portfolio,filename='portfolio.html')
+        # plotly.offline.plot(portfolio,filename='portfolio.html')
