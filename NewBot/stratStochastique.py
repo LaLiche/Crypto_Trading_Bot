@@ -5,7 +5,7 @@ from botstrategy import BotStrategy
 class stratStochastique(BotStrategy):
     def __init__(self, chart_m5, chart_m15, chart_d1):
         super(stratStochastique,self).__init__()
-        self.stopLoss = 0.005
+        self.stopLoss = 0.001
         self.data_m5 = init_chart(chart_m5)
         self.data_m15 = init_chart(chart_m15)
         self.data_d1 = init_chart(chart_d1)
@@ -51,10 +51,13 @@ class stratStochastique(BotStrategy):
         # necessaire que condStochastique soit appelee dans cette methode
         st = self.condStochastique(candlestick)
         prio = self.sensPrioAchat(candlestick)
+        print("dans conditionOpen")
+        if prio:
+            print("et prio est vrai")
         return prio and st
 
-    def conditionClose(self,trade):
-        return self.currentPrice > 1.01*trade.entryPrice
+    def conditionClose(self,candlestick,trade):
+        return self.currentPrice - trade.entryPrice > self.stopLoss
 
 def init_chart(chart):
     prices = [] # close

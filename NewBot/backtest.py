@@ -9,12 +9,14 @@ from stratStochastique import stratStochastique
 def main(argv):
 	pair = "BTC_XMR"
 	debut = '2017-06-01 14:00:00'
-	fin = '2017-06-07 20:53:20'
+	fin = '2017-08-01 20:53:20'
 	trading_chart = BotChart("poloniex",pair,300,debut,fin)
 	chart_m5 = BotChart("poloniex",pair,900,debut,fin)
-	chart_m15 = BotChart("poloniex",pair,900,debut,fin)
+	chart_m15 = BotChart("poloniex",pair,1800,debut,fin)
 	chart_d1 = BotChart("poloniex",pair,86400,debut,fin)
 	strategy = stratStochastique(chart_m5,chart_m15,chart_d1)
+	# strategy = stratRsi()
+
 
 	# on va stocker les bougies de period 5mn, 15mn, et 1 jour
 

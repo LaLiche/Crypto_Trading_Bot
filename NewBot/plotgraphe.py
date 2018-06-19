@@ -12,10 +12,10 @@ class PlotGraphe(object):
 
     def plotRsi(self,prices,temps):
 
-        RSI_data = [50]
+        RSI_data = []
         for i in range(1,len(prices)):
             RSI_data.append(self.strategy.indicators.RSI(prices[:i]));
-        RSI_data.append(50)
+        # RSI_data.append(50)
 
         rsi = plotly.graph_objs.Scatter(
         x = temps,
@@ -37,13 +37,12 @@ class PlotGraphe(object):
 
         return rsi,rsi_min,rsi_max
 
-<<<<<<< HEAD
     def plotStochastique(self,prices,low,high,temps):
 
-        RSI_data = [50]
+        RSI_data = []
         for i in range(1,len(prices)):
             RSI_data.append(self.strategy.indicators.stochastique(prices[:i],low[:i],high[:i],14));
-        RSI_data.append(50)
+        # RSI_data.append(50)
 
         rsi = plotly.graph_objs.Scatter(
         x = temps,
@@ -65,7 +64,6 @@ class PlotGraphe(object):
 
         return rsi,rsi_min,rsi_max
 
-=======
     def plotBollinger(self,prices,temps):
         bollSup_data = [prices[0]]
         boll_data = [prices[0]]
@@ -118,7 +116,6 @@ class PlotGraphe(object):
         marker = dict(color= 'rgb(255,0,0)')
         )
         return span_A,span_B
->>>>>>> master
 
     def plotTrade(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
@@ -140,14 +137,11 @@ class PlotGraphe(object):
 
     def plotPortfolio(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
-<<<<<<< HEAD
         if (len(trade_entry_data) > 0):
             portfolioValue = [trade_entry_data[0]]
         else:
             portfolioValue = []
-=======
         portfolioValue = [0]
->>>>>>> master
         all_trade_time = [tt.FloattoTime(self.chart.startTime)]
 
         j = 0
@@ -211,9 +205,9 @@ class PlotGraphe(object):
         # rsi,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
         st,st_min,st_max = self.plotStochastique(close_data,low_data, high_data, x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
-        portfolio = [self.plotPortfolio(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)]
-        bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
-        span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimokuA,x_data_ichimokuB)
+        # portfolio = [self.plotPortfolio(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)]
+        # bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
+        # span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimokuA,x_data_ichimokuB)
 
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
@@ -226,13 +220,13 @@ class PlotGraphe(object):
 
         fig = plotly.tools.make_subplots(rows=2, cols=1,shared_xaxes=True)
         fig.append_trace(trace, 1, 1)
-        fig.append_trace(bollingerSup,1,1)
-        fig.append_trace(bollinger,1,1)
-        fig.append_trace(bollingerInf,1,1)
+        # fig.append_trace(bollingerSup,1,1)
+        # fig.append_trace(bollinger,1,1)
+        # fig.append_trace(bollingerInf,1,1)
         fig.append_trace(entryPoint, 1, 1)
         fig.append_trace(exitPoint, 1, 1)
-        fig.append_trace(span_A, 1, 1)
-        fig.append_trace(span_B, 1, 1)
+        # fig.append_trace(span_A, 1, 1)
+        # fig.append_trace(span_B, 1, 1)
         # fig.append_trace(rsi, 2, 1)
         # fig.append_trace(rsi_min, 2, 1)
         # fig.append_trace(rsi_max, 2, 1)

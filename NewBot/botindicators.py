@@ -2,14 +2,9 @@ import numpy
 
 class BotIndicators(object):
 	def __init__(self):
-<<<<<<< HEAD
 		self.exp_Average = 0
-=======
-		self.expAverage = 0
 		self.tenkan_sen = []
 		self.kijun_sen = []
->>>>>>> master
-		pass
 
 	def momentum(self, dataPoints, period=14):
 		if (len(dataPoints) > period -1):
@@ -57,13 +52,13 @@ class BotIndicators(object):
   		if len(prices) > period:
  			return rsi[-1]
  		else:
- 			return rsi[-1] # output a neutral amount until enough prices in list to calculate RSI
+ 			return 0 # output a neutral amount until enough prices in list to calculate RSI
 
 	def expAverage(self,prices,candlestick,nbPeriod):
 		if self.exp_Average != 0:
 			self.exp_Average = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*self.exp_Average
 		else:
-			self.exp_Average = candlestick.close
+			self.exp_Average = (candlestick.low + candlestick.high + candlestick.close)/float(3)
 		return self.exp_Average
 
 	def simpleAverage(self,prices,nbPeriod):
@@ -117,6 +112,8 @@ class BotIndicators(object):
 
 	def stochastique(self,prices,low,high,nbPeriod=14):
 		if (len(low)>nbPeriod):
+			if(max(high[-nbPeriod:]) == min(low[-nbPeriod:])):
+				print("len(prices) = " + str(len(prices)))
 			return 100*(prices[-1]-min(low[-nbPeriod:]))/(max(high[-nbPeriod:])-min(low[-nbPeriod:]))
 		else:
 			return -1
