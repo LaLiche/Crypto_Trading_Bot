@@ -4,11 +4,7 @@ class BotIndicators(object):
 	def __init__(self):
 		self.tenkan_sen = []
 		self.kijun_sen = []
-<<<<<<< HEAD
 		self.true_range = []
-		pass
-=======
->>>>>>> test
 
 	def momentum(self, dataPoints, period=14):
 		if (len(dataPoints) > period -1):

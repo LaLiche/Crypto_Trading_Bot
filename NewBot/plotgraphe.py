@@ -136,25 +136,12 @@ class PlotGraphe(object):
 
         return entryPoint,exitPoint
 
-<<<<<<< HEAD
     def plotPortfolio(self,close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,temps):
         unit = [1.]
         portfolioValue = [trade_entry_data[0]]
-=======
-    def plotPortfolio(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
-
-        if (len(trade_entry_data) > 0):
-            portfolioValue = [trade_entry_data[0]]
-        else:
-            portfolioValue = []
-        portfolioValue = [0]
-        all_trade_time = [tt.FloattoTime(self.chart.startTime)]
-
->>>>>>> test
         j = 0
         L = len(trade_exit_time)
         trade_open = False
-
         for i in range(len(temps)):
             if L>j:
                 if trade_open == False:
