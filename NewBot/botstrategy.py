@@ -4,6 +4,7 @@ from bottrade import BotTrade
 
 class BotStrategy(object):
 	def __init__(self):
+		self.capital = 1000
 		self.output = BotLog()
 		self.prices = []
 		self.high = []
