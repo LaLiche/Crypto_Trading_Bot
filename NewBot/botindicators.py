@@ -5,6 +5,7 @@ class BotIndicators(object):
 		self.expAverage = 0
 		self.tenkan_sen = []
 		self.kijun_sen = []
+		self.true_range = []
 		pass
 
 	def momentum(self, dataPoints, period=14):
@@ -82,10 +83,8 @@ class BotIndicators(object):
 			high_9 = max(high[-9:])
 			low_9 = min(low[-9:])
 		else:
-			# high_9 = max(high)
-			# low_9 = min(low)
-			high_9 = 0
-			low_9 = 0
+			high_9 = max(high)
+			low_9 = min(low)
 
 		self.tenkan_sen.append((high_9+low_9)/2)
 
@@ -93,10 +92,8 @@ class BotIndicators(object):
 			high_26 = max(high[-26:])
 			low_26 = min(low[-26:])
 		else:
-			# high_26 = max(high)
-			# low_26 = min(low)
-			high_26 = 0
-			low_26 = 0
+			high_26 = max(high)
+			low_26 = min(low)
 
 		self.kijun_sen.append((high_26+low_26)/2)
 
@@ -104,13 +101,27 @@ class BotIndicators(object):
 			senkou_span_A = (self.tenkan_sen[-1]+self.kijun_sen[-1])/2
 			senkou_span_B = (max(high[-52:])+min(low[-52:]))/2
 		else:
-			# senkou_span_A = (self.tenkan_sen[0]+self.kijun_sen[0])/2
-			# senkou_span_B = (max(high)+min(low))/2
-			senkou_span_A = 0
-			senkou_span_B = 0
+			senkou_span_A = (self.tenkan_sen[0]+self.kijun_sen[0])/2
+			senkou_span_B = (max(high)+min(low))/2
 
 		return [senkou_span_A,senkou_span_B]
 
 	def stochastique(self,high,low,candlestick,nbPeriod):
 		if len(low) > nbPeriod:
 			return 100*(candlestick.close-min(low[-nbPeriod:])/(max(high[-nbPeriod:])-min(low[-nbPeriod:]))
+		
+	def average_true_range(self,high,low,prices,nbPeriod=20):
+		L = len(prices)
+		if L>1:
+			self.true_range.append(max(high[-1]-low[-1],prices[-2]-high[-1],prices[-2]-low[-1]))
+			return self.simpleAverage(self.true_range,min(L,nbPeriod))
+		else:
+			return 0
+
+	def saitta_support_resistance(self,high,low,nbPeriod=20):
+		if len(high)>2:
+			support = min(low[-min(nbPeriod,len(low)):-1])
+			resistance = max(high[-min(nbPeriod,len(high)):-1])
+			return [support,resistance]
+		else:
+			return [0,999999999]

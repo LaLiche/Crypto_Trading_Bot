@@ -8,6 +8,7 @@ class PlotGraphe(object):
     def __init__(self,chart,strategy):
         self.chart = chart
         self.strategy = strategy
+        self.perf = []
 
 
     def plotRsi(self,prices,temps):
@@ -108,26 +109,51 @@ class PlotGraphe(object):
 
         return entryPoint,exitPoint
 
-    def plotPortfolio(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
-
-        portfolioValue = [0]
-        all_trade_time = [tt.FloattoTime(self.chart.startTime)]
-
+    def plotPortfolio(self,close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,temps):
+        unit = [1.]
+        portfolioValue = [trade_entry_data[0]]
         j = 0
-        for i in range(len(trade_exit_data)):
-            portfolioValue.append(portfolioValue[j]-trade_entry_data[i])
-            all_trade_time.append(trade_entry_time[i])
-            portfolioValue.append(portfolioValue[j+1]+trade_exit_data[i])
-            all_trade_time.append(trade_exit_time[i])
-            j += 2
+        L = len(trade_exit_time)
+        trade_open = False
+
+        for i in range(len(temps)):
+            if L>j:
+                if trade_open == False:
+                    if temps[i] == trade_entry_time[j]:
+                        trade_open = True
+                        unit.append(portfolioValue[-1]/trade_entry_data[j])
+                        portfolioValue.append(unit[-1]*trade_entry_data[j])
+                    else:
+                        portfolioValue.append(portfolioValue[-1])
+                        unit.append(unit[-1])
+                else:
+                    if temps[i] == trade_exit_time[j]:
+                        trade_open = False
+                        portfolioValue.append(unit[-1]*trade_exit_data[j])
+                        unit.append(unit[-1])
+                        j += 1
+                    else :
+                        portfolioValue.append(portfolioValue[-1])
+                        unit.append(unit[-1])
+            else:
+                break
+
+        self.perf = (portfolioValue[-1]-portfolioValue[0])/portfolioValue[0]*100
 
         portfolio = plotly.graph_objs.Scatter(
-        x = all_trade_time,
+        x = temps,
         y = portfolioValue,
         mode = 'lines+markets',
         marker = dict(size = 10,color = 'rgba(0, 0, 255, .9)')
         )
-        return portfolio
+        perf = plotly.graph_objs.Scatter(
+        x = temps,
+        y = unit,
+        yaxis = 'y2',
+        mode = 'lines+markets',
+        marker = dict(size = 10,color = 'rgba(0, 0, 0, .9)')
+        )
+        return [portfolio,perf]
 
     def plotCandle(self,open_data,close_data,high_data,low_data,x_data):
 
@@ -173,26 +199,33 @@ class PlotGraphe(object):
         trace = self.plotCandle(open_data,close_data,high_data,low_data,x_data)
         rsi,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
-        portfolio = [self.plotPortfolio(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)]
-        bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
+        portfolio = self.plotPortfolio(close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,x_data)
+        # bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
         span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimokuA,x_data_ichimokuB)
 
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
-            'yaxis1': {'title': self.chart.pair,'domain':[0.26,1]},
+            'xaxis':{'rangeslider' : dict(visible = False)},
+            'yaxis1': {'title': self.chart.pair,'domain':[0.26,1],'autorange':True},
             'yaxis2':{'domain':[0,0.25]},
-            # 'xaxis2' : {'ticks':"",'showticklabels':False,'ticktext': tt.FloattoTime(tab=x_data),'tickvals': x_data, },
-            # 'yaxis3':{'domain':[0.26,1]},
-            # 'xaxis3' : {'ticks':"",'showticklabels':False,'ticktext': tt.FloattoTime(tab=x_data),'tickvals': x_data, },
             }
+
+        layout2 = plotly.graph_objs.Layout(
+            yaxis2=dict(
+                overlaying='y',
+                side='right',
+                range = [0,2]
+                )
+            )
+
 
         fig = plotly.tools.make_subplots(rows=2, cols=1,shared_xaxes=True)
         fig.append_trace(trace, 1, 1)
-        fig.append_trace(bollingerSup,1,1)
-        fig.append_trace(bollinger,1,1)
-        fig.append_trace(bollingerInf,1,1)
         fig.append_trace(entryPoint, 1, 1)
         fig.append_trace(exitPoint, 1, 1)
+        # fig.append_trace(bollingerSup,1,1)
+        # fig.append_trace(bollinger,1,1)
+        # fig.append_trace(bollingerInf,1,1)
         fig.append_trace(span_A, 1, 1)
         fig.append_trace(span_B, 1, 1)
         fig.append_trace(rsi, 2, 1)
@@ -200,4 +233,6 @@ class PlotGraphe(object):
         fig.append_trace(rsi_max, 2, 1)
         fig['layout']=layout
         plotly.offline.plot(fig,filename='graphe.html')
-        # plotly.offline.plot(portfolio,filename='portfolio.html')
+
+        fig2 = plotly.graph_objs.Figure(data=portfolio,layout=layout2)
+        plotly.offline.plot(fig2,filename='portfolio.html')
