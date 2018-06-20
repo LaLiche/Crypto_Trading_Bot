@@ -2,11 +2,13 @@ import numpy
 
 class BotIndicators(object):
 	def __init__(self):
-		self.expAverage = 0
 		self.tenkan_sen = []
 		self.kijun_sen = []
+<<<<<<< HEAD
 		self.true_range = []
 		pass
+=======
+>>>>>>> test
 
 	def momentum(self, dataPoints, period=14):
 		if (len(dataPoints) > period -1):
@@ -54,14 +56,14 @@ class BotIndicators(object):
   		if len(prices) > period:
  			return rsi[-1]
  		else:
- 			return rsi[-1] # output a neutral amount until enough prices in list to calculate RSI
+ 			return 0 # output a neutral amount until enough prices in list to calculate RSI
 
-	def expAverage(self,prices,candlestick,nbPeriod):
-		if self.expAverage != 0:
-			self.expAverage = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*self.expAverage
+	def expAverage(self,prices,candlestick,nbPeriod,lastAverage):
+		if lastAverage != 0:
+			res = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*lastAverage
 		else:
-			self.expAverage = candlestick.close
-		return self.expAverage
+			res = (candlestick.low + candlestick.high + candlestick.close)/float(3)
+		return res
 
 	def simpleAverage(self,prices,nbPeriod):
 	 	return sum(prices[-nbPeriod:]) / float(len(prices[-nbPeriod:]))
@@ -106,10 +108,14 @@ class BotIndicators(object):
 
 		return [senkou_span_A,senkou_span_B]
 
-	def stochastique(self,high,low,candlestick,nbPeriod):
-		if len(low) > nbPeriod:
-			return 100*(candlestick.close-min(low[-nbPeriod:])/(max(high[-nbPeriod:])-min(low[-nbPeriod:]))
-		
+	def stochastique(self,prices,low,high,nbPeriod=14):
+		if (len(low)>nbPeriod):
+			if(max(high[-nbPeriod:]) == min(low[-nbPeriod:])):
+				print("len(prices) = " + str(len(prices)))
+			return 100*(prices[-1]-min(low[-nbPeriod:]))/(max(high[-nbPeriod:])-min(low[-nbPeriod:]))
+		else:
+			return -1
+
 	def average_true_range(self,high,low,prices,nbPeriod=20):
 		L = len(prices)
 		if L>1:
