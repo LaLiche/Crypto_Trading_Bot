@@ -5,9 +5,9 @@ class stratSaitta(BotStrategy):
         super(stratSaitta,self).__init__()
 
     def conditionOpen(self,candlestick):
-        resistance = self.indicators.saitta_support_resistance(self.high,self.low,40)[1]
+        resistance = self.indicators.saitta_support_resistance(self.high,self.low,12)[1]
         return self.currentPrice > resistance
 
     def conditionClose(self,candlestick):
-        support = self.indicators.saitta_support_resistance(self.high,self.low,40)[0]
+        support = self.indicators.saitta_support_resistance(self.high,self.low,12)[0]
         return self.currentPrice < support

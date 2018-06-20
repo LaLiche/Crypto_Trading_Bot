@@ -12,7 +12,7 @@ class stratRsi(BotStrategy):
         self.memory = 500
         self.countOpen = 0
         self.countClose = 0
-        self.distanceMin = 5
+        self.distanceMin = 10
 
     def condRsiOpen(self):
         rsi = self.indicators.RSI(self.prices)
@@ -51,45 +51,45 @@ class stratRsi(BotStrategy):
             self.countOpen += 1
         return False
 
-    def condRsiClose(self):
-        rsi = self.indicators.RSI(self.prices)
-        if self.countClose > self.memory:
-            self.resetClose()
-        if self.zone == 1:
-            self.rsiZ1 = maxi(rsi,self.rsiZ1)
-            self.priceZ1 = maxi(self.currentPrice,self.priceZ1) # on stocke le prix maximal
-            if rsi < 70: #on passe en zone 2
-                self.rsiZ2 = rsi
-                self.zone = 2
-        elif self.zone == 2:
-            self.rsiZ2 = mini(rsi,self.rsiZ2) # on stocke le rsi de la zone 2
-            if rsi > 70:
-                if self.currentPrice > self.priceZ1 and rsi < self.rsiZ1 and self.countClose >= self.distanceMin: # divergence : on passe en zone 3
-                    self.zone = 3
-                else:
-                    self.resetClose()
-                    self.zone = 1
-            if rsi < 30: # on reset si le rsi descend trop
-                self.resetClose()
-        elif self.zone == 3:
-            self.rsiZ3 = maxi(rsi,self.rsiZ3)
-            if rsi < self.rsiZ2: #on passe en zone 4
-                self.resetClose()
-                return True
-            elif self.rsiZ3 > self.rsiZ1:
-                self.resetOpen()
-                self.zone = 1
-        else:
-            if rsi > 70:
-                self.resetClose()
-                self.zone = 1
-        if self.zone != 0:
-            self.countClose += 1
-        return False
+    # def condRsiClose(self):
+    #     rsi = self.indicators.RSI(self.prices)
+    #     if self.countClose > self.memory:
+    #         self.resetClose()
+    #     if self.zone == 1:
+    #         self.rsiZ1 = maxi(rsi,self.rsiZ1)
+    #         self.priceZ1 = maxi(self.currentPrice,self.priceZ1) # on stocke le prix maximal
+    #         if rsi < 70: #on passe en zone 2
+    #             self.rsiZ2 = rsi
+    #             self.zone = 2
+    #     elif self.zone == 2:
+    #         self.rsiZ2 = mini(rsi,self.rsiZ2) # on stocke le rsi de la zone 2
+    #         if rsi > 70:
+    #             if self.currentPrice > self.priceZ1 and rsi < self.rsiZ1 and self.countClose >= self.distanceMin: # divergence : on passe en zone 3
+    #                 self.zone = 3
+    #             else:
+    #                 self.resetClose()
+    #                 self.zone = 1
+    #         if rsi < 30: # on reset si le rsi descend trop
+    #             self.resetClose()
+    #     elif self.zone == 3:
+    #         self.rsiZ3 = maxi(rsi,self.rsiZ3)
+    #         if rsi < self.rsiZ2: #on passe en zone 4
+    #             self.resetClose()
+    #             return True
+    #         elif self.rsiZ3 > self.rsiZ1:
+    #             self.resetOpen()
+    #             self.zone = 1
+    #     else:
+    #         if rsi > 70:
+    #             self.resetClose()
+    #             self.zone = 1
+    #     if self.zone != 0:
+    #         self.countClose += 1
+    #     return False
 
-    # def condRsiOpen(self):
-    #     resistance = self.indicators.saitta_support_resistance(self.high,self.low,40)[1]
-    #     return self.currentPrice > resistance
+    def condRsiClose(self):
+        resistance = self.indicators.saitta_support_resistance(self.high,self.low,12)[1]
+        return self.currentPrice > resistance
 
 
     def resetOpen(self):

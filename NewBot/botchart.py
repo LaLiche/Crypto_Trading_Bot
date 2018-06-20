@@ -12,7 +12,7 @@ class BotChart(object):
 
 		self.startTime = tt.TimetoFloat(startTime)
 		self.endTime = tt.TimetoFloat(endTime)
-
+		self.compteur = 0
 		self.data = []
 
 		if (exchange == "poloniex"):
@@ -20,11 +20,10 @@ class BotChart(object):
 
 			if backtest:
 				poloData = self.conn.api_query("returnChartData",{"currencyPair":self.pair,"start":self.startTime,"end":self.endTime,"period":self.period})
-				compteur = 0
 				for datum in poloData:
 					if (datum['open'] and datum['close'] and datum['high'] and datum['low']):
-						self.data.append(BotCandlestick(self.period,datum['open'],datum['close'],datum['high'],datum['low'],self.startTime+compteur*self.period,datum['weightedAverage']))
-						compteur += 1
+						self.data.append(BotCandlestick(self.period,datum['open'],datum['close'],datum['high'],datum['low'],self.startTime+self.compteur*self.period,datum['weightedAverage']))
+						self.compteur += 1
 
 		if (exchange == "bittrex"):
 			if backtest:
@@ -43,3 +42,12 @@ class BotChart(object):
 		lastPairPrice = {}
 		lastPairPrice = currentValues[self.pair]["last"]
 		return lastPairPrice
+
+	def getSigma(self):
+		volatilite = []
+		for c in self.data:
+			volatilite.append((c.high-c.low)/c.low*100)
+		m = sum(volatilite,0.0)/len(volatilite)
+		v = sum([(x-m)**2 for x in volatilite],0.0)/len(volatilite)
+		s = v ** 0.5
+		return s
