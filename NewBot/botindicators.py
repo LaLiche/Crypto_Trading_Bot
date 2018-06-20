@@ -2,7 +2,6 @@ import numpy
 
 class BotIndicators(object):
 	def __init__(self):
-		self.exp_Average = 0
 		self.tenkan_sen = []
 		self.kijun_sen = []
 
@@ -54,12 +53,12 @@ class BotIndicators(object):
  		else:
  			return 0 # output a neutral amount until enough prices in list to calculate RSI
 
-	def expAverage(self,prices,candlestick,nbPeriod):
-		if self.exp_Average != 0:
-			self.exp_Average = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*self.exp_Average
+	def expAverage(self,prices,candlestick,nbPeriod,lastAverage):
+		if lastAverage != 0:
+			res = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*lastAverage
 		else:
-			self.exp_Average = (candlestick.low + candlestick.high + candlestick.close)/float(3)
-		return self.exp_Average
+			res = (candlestick.low + candlestick.high + candlestick.close)/float(3)
+		return res
 
 	def simpleAverage(self,prices,nbPeriod):
 	 	return sum(prices[-nbPeriod:]) / float(len(prices[-nbPeriod:]))
