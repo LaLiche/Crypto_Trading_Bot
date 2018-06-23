@@ -13,6 +13,8 @@ class stratRsi(BotStrategy):
         self.countOpen = 0
         self.countClose = 0
         self.distanceMin = 10
+        self.stopLoss = 2 * self.indicators.average_true_range(self.high,self.low,self.prices)
+
 
     def condRsiOpen(self):
         rsi = self.indicators.RSI(self.prices)

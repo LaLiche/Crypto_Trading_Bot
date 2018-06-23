@@ -162,7 +162,8 @@ class PlotGraphe(object):
                         portfolioValue.append(portfolioValue[-1])
                         unit.append(unit[-1])
             else:
-                break
+                portfolioValue.append(portfolioValue[-1])
+                unit.append(unit[-1])
 
         self.perf = (portfolioValue[-1]-portfolioValue[0])/portfolioValue[0]*100
 
@@ -223,7 +224,7 @@ class PlotGraphe(object):
                 trade_exit_time.append(tt.FloattoTime(trade.exitTime))
 
         trace = self.plotCandle(open_data,close_data,high_data,low_data,x_data)
-        # rsi,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
+        rsi,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
         st,st_min,st_max = self.plotStochastique(close_data,low_data, high_data, x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
         portfolio = self.plotPortfolio(close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,x_data)
@@ -255,12 +256,12 @@ class PlotGraphe(object):
         fig.append_trace(exitPoint, 1, 1)
         # fig.append_trace(span_A, 1, 1)
         # fig.append_trace(span_B, 1, 1)
-        # fig.append_trace(rsi, 2, 1)
-        # fig.append_trace(rsi_min, 2, 1)
-        # fig.append_trace(rsi_max, 2, 1)
-        fig.append_trace(st, 2, 1)
-        fig.append_trace(st_min, 2, 1)
-        fig.append_trace(st_max, 2, 1)
+        fig.append_trace(rsi, 2, 1)
+        fig.append_trace(rsi_min, 2, 1)
+        fig.append_trace(rsi_max, 2, 1)
+        # fig.append_trace(st, 2, 1)
+        # fig.append_trace(st_min, 2, 1)
+        # fig.append_trace(st_max, 2, 1)
         fig['layout']=layout
         plotly.offline.plot(fig,filename='graphe.html')
 

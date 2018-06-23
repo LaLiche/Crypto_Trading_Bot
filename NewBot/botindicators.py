@@ -49,10 +49,7 @@ class BotIndicators(object):
  			down = (down*(period - 1) + downval)/period
   			rs = up/down
  			rsi[i] = 100. - 100./(1. + rs)
-  		if len(prices) > period:
- 			return rsi[-1]
- 		else:
- 			return 0 # output a neutral amount until enough prices in list to calculate RSI
+		return rsi[-1]
 
 	def expAverage(self,prices,candlestick,nbPeriod,lastAverage):
 		if lastAverage != 0:
