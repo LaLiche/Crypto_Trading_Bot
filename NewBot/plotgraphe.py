@@ -120,6 +120,8 @@ class PlotGraphe(object):
 
     def plotTrade(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
+        trade_entry_data = [t * 0.9 for t in trade_entry_data]
+        trade_exit_data = [t * 0.9 for t in trade_exit_data]
         entryPoint = plotly.graph_objs.Scatter(
         x = trade_entry_time,
         y = trade_entry_data,
@@ -148,10 +150,10 @@ class PlotGraphe(object):
                     if temps[i] == trade_entry_time[j]:
                         trade_open = True
                         unit.append(portfolioValue[-1]/trade_entry_data[j])
-                        portfolioValue.append(unit[-1]*trade_entry_data[j])
+                        portfolioValue.append(unit[-1]*close_data[i])
                     else:
                         portfolioValue.append(portfolioValue[-1])
-                        unit.append(unit[-1])
+                        unit.append(portfolioValue[-1]/close_data[i])
                 else:
                     if temps[i] == trade_exit_time[j]:
                         trade_open = False
@@ -159,7 +161,7 @@ class PlotGraphe(object):
                         unit.append(unit[-1])
                         j += 1
                     else :
-                        portfolioValue.append(portfolioValue[-1])
+                        portfolioValue.append(unit[-1]*close_data[i])
                         unit.append(unit[-1])
             else:
                 portfolioValue.append(portfolioValue[-1])
@@ -217,10 +219,10 @@ class PlotGraphe(object):
             x_data_ichimokuB.append(tt.FloattoTime(c.startTime+26*self.chart.period))
 
         for trade in self.strategy.trades:
-            trade_entry_data.append(trade.entryPrice*0.9)
+            trade_entry_data.append(trade.entryPrice)
             trade_entry_time.append(tt.FloattoTime(trade.startTime))
             if trade.exitTime != 0:
-                trade_exit_data.append(trade.exitPrice*0.9)
+                trade_exit_data.append(trade.exitPrice)
                 trade_exit_time.append(tt.FloattoTime(trade.exitTime))
 
         trace = self.plotCandle(open_data,close_data,high_data,low_data,x_data)

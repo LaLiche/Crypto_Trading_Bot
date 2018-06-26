@@ -8,6 +8,6 @@ class stratSaitta(BotStrategy):
         resistance = self.indicators.saitta_support_resistance(self.high,self.low,12)[1]
         return self.currentPrice > resistance
 
-    def conditionClose(self,candlestick):
+    def conditionClose(self,candlestick,trade):
         support = self.indicators.saitta_support_resistance(self.high,self.low,12)[0]
         return self.currentPrice < support
