@@ -13,7 +13,7 @@ class BotIndicators(object):
 	def EMA(self, prices, period):
 		x = numpy.asarray(prices)
 		weights = None
-		weights = numpy.exp(numpy.linspace(-1., 0., period))
+		weights = numpy.exp(numpy.linspace(-1., 0.,min(len(prices),period) ))
 		weights /= weights.sum()
 
 		a = numpy.convolve(x, weights, mode='full')[:len(x)]
@@ -59,7 +59,15 @@ class BotIndicators(object):
 		return res
 
 	def simpleAverage(self,prices,nbPeriod):
-	 	return sum(prices[-nbPeriod:]) / float(len(prices[-nbPeriod:]))
+	 	return sum(prices[-min(len(prices),nbPeriod):]) / float(len(prices[-min(len(prices),nbPeriod):]))
+
+	def expMoyenne(self,prices,nbPeriod,lastAverage):
+		a = 2./float(nbPeriod+1)
+		if len(prices)>nbPeriod:
+			res = a*float(prices[-1])+(1.-a)*lastAverage
+		else:
+			res = prices[-1]
+		return res
 
 	def pointPivot(self,candlestick):
 		return (candlestick.high + candlestick.low + candlestick.close)/float(3)

@@ -14,14 +14,27 @@ class PlotGraphe(object):
     def plotRsi(self,prices,temps):
 
         RSI_data = []
+        RSI_moyenne = []
+        lastAverage = 0.
         for i in range(1,len(prices)):
             RSI_data.append(self.strategy.indicators.RSI(prices[:i]));
+            RSI_moyenne.append(self.strategy.indicators.expMoyenne(RSI_data[:i],7,lastAverage))
+            lastAverage = RSI_moyenne[-1]
         # RSI_data.append(50)
+
+
 
         rsi = plotly.graph_objs.Scatter(
         x = temps,
         y = RSI_data,
         marker = dict(size = 10,color = 'rgba(255, 0, 255, .9)')
+        )
+
+        rsi_moy = plotly.graph_objs.Scatter(
+        x = temps,
+        y = RSI_moyenne,
+        # y = [30 for i in range(len(temps))],
+        marker = dict(size = 10,color = 'rgba(0, 0, 0, .9)')
         )
 
         rsi_min = plotly.graph_objs.Scatter(
@@ -36,34 +49,34 @@ class PlotGraphe(object):
         marker = dict(size = 10,color = 'rgba(255, 0, 0, .9)')
         )
 
-        return rsi,rsi_min,rsi_max
+        return rsi,rsi_moy,rsi_min,rsi_max
 
     def plotStochastique(self,prices,low,high,temps):
 
-        RSI_data = []
+        STOCH_data = []
         for i in range(1,len(prices)):
-            RSI_data.append(self.strategy.indicators.stochastique(prices[:i],low[:i],high[:i],14));
-        # RSI_data.append(50)
+            STOCH_data.append(self.strategy.indicators.stochastique(prices[:i],low[:i],high[:i],14));
+        # STOCH_data.append(50)
 
-        rsi = plotly.graph_objs.Scatter(
+        stoch = plotly.graph_objs.Scatter(
         x = temps,
-        y = RSI_data,
+        y = STOCH_data,
         marker = dict(size = 10,color = 'rgba(255, 0, 255, .9)')
         )
 
-        rsi_min = plotly.graph_objs.Scatter(
+        stoch_min = plotly.graph_objs.Scatter(
         x = temps,
         y = [20 for i in range(len(temps))],
         marker = dict(size = 10,color = 'rgba(255, 0, 0, .9)')
         )
 
-        rsi_max = plotly.graph_objs.Scatter(
+        stoch_max = plotly.graph_objs.Scatter(
         x = temps,
         y = [80 for i in range(len(temps))],
         marker = dict(size = 10,color = 'rgba(255, 0, 0, .9)')
         )
 
-        return rsi,rsi_min,rsi_max
+        return stoch,stoch_min,stoch_max
 
     def plotBollinger(self,prices,temps):
         bollSup_data = [prices[0]]
@@ -140,34 +153,40 @@ class PlotGraphe(object):
 
     def plotPortfolio(self,close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,temps):
         unit = [1.]
-        portfolioValue = [trade_entry_data[0]]
-        j = 0
-        L = len(trade_exit_time)
-        trade_open = False
-        for i in range(len(temps)):
-            if L>j:
-                if trade_open == False:
-                    if temps[i] == trade_entry_time[j]:
-                        trade_open = True
-                        unit.append(portfolioValue[-1]/trade_entry_data[j])
-                        portfolioValue.append(unit[-1]*close_data[i])
+        try:
+            portfolioValue = [trade_entry_data[0]]
+            j = 0
+            L = len(trade_exit_time)
+            trade_open = False
+            for i in range(len(temps)):
+                if L>j:
+                    if trade_open == False:
+                        if temps[i] == trade_entry_time[j]:
+                            trade_open = True
+                            unit.append(portfolioValue[-1]/trade_entry_data[j])
+                            portfolioValue.append(unit[-1]*close_data[i])
+                        else:
+                            portfolioValue.append(portfolioValue[-1])
+                            unit.append(portfolioValue[-1]/close_data[i])
                     else:
-                        portfolioValue.append(portfolioValue[-1])
-                        unit.append(portfolioValue[-1]/close_data[i])
+                        if temps[i] == trade_exit_time[j]:
+                            trade_open = False
+                            portfolioValue.append(unit[-1]*trade_exit_data[j])
+                            unit.append(unit[-1])
+                            j += 1
+                        else :
+                            portfolioValue.append(unit[-1]*close_data[i])
+                            unit.append(unit[-1])
                 else:
-                    if temps[i] == trade_exit_time[j]:
-                        trade_open = False
-                        portfolioValue.append(unit[-1]*trade_exit_data[j])
-                        unit.append(unit[-1])
-                        j += 1
-                    else :
-                        portfolioValue.append(unit[-1]*close_data[i])
-                        unit.append(unit[-1])
-            else:
-                portfolioValue.append(portfolioValue[-1])
-                unit.append(unit[-1])
+                    portfolioValue.append(portfolioValue[-1])
+                    unit.append(unit[-1])
 
-        self.perf = (portfolioValue[-1]-portfolioValue[0])/portfolioValue[0]*100
+            self.perf = (portfolioValue[-1]-portfolioValue[0])/portfolioValue[0]*100
+
+        except Exception as e:
+            self.perf = 1
+            self.unit = [1]
+            portfolioValue = [0]
 
         portfolio = plotly.graph_objs.Scatter(
         x = temps,
@@ -182,6 +201,7 @@ class PlotGraphe(object):
         mode = 'lines+markets',
         marker = dict(size = 10,color = 'rgba(0, 0, 0, .9)')
         )
+
         return [portfolio,perf]
 
     def plotCandle(self,open_data,close_data,high_data,low_data,x_data):
@@ -226,7 +246,7 @@ class PlotGraphe(object):
                 trade_exit_time.append(tt.FloattoTime(trade.exitTime))
 
         trace = self.plotCandle(open_data,close_data,high_data,low_data,x_data)
-        rsi,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
+        rsi,rsi_moy,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
         st,st_min,st_max = self.plotStochastique(close_data,low_data, high_data, x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
         portfolio = self.plotPortfolio(close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,x_data)
@@ -243,8 +263,7 @@ class PlotGraphe(object):
         layout2 = plotly.graph_objs.Layout(
             yaxis2=dict(
                 overlaying='y',
-                side='right',
-                range = [0,2]
+                side='right'
                 )
             )
 
@@ -256,9 +275,10 @@ class PlotGraphe(object):
         # fig.append_trace(bollingerInf,1,1)
         fig.append_trace(entryPoint, 1, 1)
         fig.append_trace(exitPoint, 1, 1)
-        # fig.append_trace(span_A, 1, 1)
-        # fig.append_trace(span_B, 1, 1)
+        fig.append_trace(span_A, 1, 1)
+        fig.append_trace(span_B, 1, 1)
         fig.append_trace(rsi, 2, 1)
+        fig.append_trace(rsi_moy, 2, 1)
         fig.append_trace(rsi_min, 2, 1)
         fig.append_trace(rsi_max, 2, 1)
         # fig.append_trace(st, 2, 1)
