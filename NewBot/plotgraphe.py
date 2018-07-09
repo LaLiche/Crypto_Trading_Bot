@@ -17,8 +17,9 @@ class PlotGraphe(object):
         RSI_moyenne = []
         lastAverage = 0.
         for i in range(1,len(prices)):
-            RSI_data.append(self.strategy.indicators.RSI(prices[:i]));
-            RSI_moyenne.append(self.strategy.indicators.expMoyenne(RSI_data[:i],7,lastAverage))
+            RSI_data.append(self.strategy.indicators.RSI(prices[:i],14))
+            # RSI_moyenne.append(self.strategy.indicators.simpleAverage(RSI_data[:i],7))
+            RSI_moyenne.append(self.strategy.indicators.expMoyenne(RSI_data[:i],21,lastAverage))
             lastAverage = RSI_moyenne[-1]
         # RSI_data.append(50)
 
@@ -250,7 +251,7 @@ class PlotGraphe(object):
         st,st_min,st_max = self.plotStochastique(close_data,low_data, high_data, x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
         portfolio = self.plotPortfolio(close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,x_data)
-        # bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
+        bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
         span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimokuA,x_data_ichimokuB)
 
         layout = {
@@ -270,9 +271,9 @@ class PlotGraphe(object):
 
         fig = plotly.tools.make_subplots(rows=2, cols=1,shared_xaxes=True)
         fig.append_trace(trace, 1, 1)
-        # fig.append_trace(bollingerSup,1,1)
-        # fig.append_trace(bollinger,1,1)
-        # fig.append_trace(bollingerInf,1,1)
+        fig.append_trace(bollingerSup,1,1)
+        fig.append_trace(bollinger,1,1)
+        fig.append_trace(bollingerInf,1,1)
         fig.append_trace(entryPoint, 1, 1)
         fig.append_trace(exitPoint, 1, 1)
         fig.append_trace(span_A, 1, 1)

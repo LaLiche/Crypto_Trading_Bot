@@ -27,12 +27,11 @@ class BotChart(object):
 
 		if (exchange == "bittrex"):
 			if backtest:
-				url = "https://bittrex.com/Api/v2.0/pub/market/GetTicks?marketName="+self.pair+"&tickInterval="+self.period+"&_="+str(self.startTime)
+				url = "https://bittrex.com/Api/v2.0/pub/market/GetTicks?marketName="+self.pair+"&tickInterval="+str(self.period)+"&_="+str(self.startTime)
 				response = urllib.urlopen(url)
 				rawdata = json.loads(response.read())
 
 				self.data = rawdata["result"]
-
 
 	def getPoints(self):
 		return self.data

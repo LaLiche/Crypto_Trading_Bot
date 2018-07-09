@@ -13,13 +13,14 @@ class BotStrategy(object):
 		self.currentPrice = ""
 		self.numSimulTrades = 1
 		self.indicators = BotIndicators()
-		self.stopLoss = 2 * self.indicators.average_true_range(self.high,self.low,self.prices)
+		# self.stopLoss = 2 * self.indicators.average_true_range(self.high,self.low,self.prices)
+		self.stopLoss = 1
 
 	def tick(self,candlestick):
 		self.currentPrice = float(candlestick.close)
 		self.prices.append(self.currentPrice)
 		self.low.append(candlestick.low)
-		self.stopLoss = 2 * self.indicators.average_true_range(self.high,self.low,self.prices)
+		# self.stopLoss = 2 * self.indicators.average_true_range(self.high,self.low,self.prices)
 		self.high.append(candlestick.high)
 		self.evaluatePositions(candlestick)
 		self.updateOpenTrades(candlestick)
