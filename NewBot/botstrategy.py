@@ -40,11 +40,11 @@ class BotStrategy(object):
 			if self.conditionOpen():
 				self.trades.append(BotTrade(self.currentPrice,candlestick.startTime,self.stopLoss))
 				try:
-					if self.backtest == True:
+					if self.backtest == False:
 						if self.short_mode:
-							self.output.sendNotif("SELL","Signal Short | "+str(self.currentPrice) + ' | ' +str(self.period))
+							self.output.sendNotif("SELL","Signal Short | Price: "+str(self.currentPrice) + ' | Period: ' +str(self.period))
 						else:
-							self.output.sendNotif("BUY","Signal Long | "+str(self.currentPrice) + ' | ' +str(self.period))
+							self.output.sendNotif("BUY","Signal Long | Price: "+str(self.currentPrice) + ' | Period: ' +str(self.period))
 				except Exception as e:
 					print e
 		for trade in openTrades:
