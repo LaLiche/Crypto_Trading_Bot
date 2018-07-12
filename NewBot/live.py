@@ -14,7 +14,7 @@ def main(argv):
 	fin = '2018-08-01 20:53:20'
 	period = 14400
 
-	chart = BotChart("poloniex",pair,period,debut,fin,False)
+	chart = BotChart("poloniex",pair,period,backtest=False)
 
 	strategy = stratRsi2()
 

@@ -6,12 +6,12 @@ import time
 import timetranslate as tt
 
 class BotChart(object):
-	def __init__(self, exchange, pair, period, startTime, endTime, backtest=True):
+	def __init__(self, exchange, pair, period, startTime=False, endTime=False, backtest=True):
 		self.pair = pair
 		self.period = period
-
-		self.startTime = tt.TimetoFloat(startTime)
-		self.endTime = tt.TimetoFloat(endTime)
+		if backtest:
+			self.startTime = tt.TimetoFloat(startTime)
+			self.endTime = tt.TimetoFloat(endTime)
 		self.compteur = 0
 		self.data = []
 

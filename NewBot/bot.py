@@ -1,4 +1,5 @@
-import sys, getopt
+import sys
+import argparse
 import time
 import pprint
 
@@ -6,49 +7,62 @@ from botchart import BotChart
 from botstrategy import BotStrategy
 from botlog import BotLog
 from botcandlestick import BotCandlestick
+from plotgraphe import PlotGraphe
+from stratRsi import stratRsi
+
 
 def main(argv):
 
-	startTime = False
-	endTime = False
+	# debut = '2016-11-02 14:00:00'
+	# fin = '2018-08-14 20:53:20'
 
 	try:
-		opts, args = getopt.getopt(argv,"hp:c:n:s:e:",["period=","currency=","points="])
-	except getopt.GetoptError:
-		print 'trading-bot.py -p <period length> -c <currency pair> -n <period of moving average>'
+		parser = argparse.ArgumentParser()
+		parser.add_argument("-p", "--period", help="Period length in seconds, 14400 by default", type=int, choices=[300,900,1800,7200,14400,86400],default=14400)
+		parser.add_argument("-c", "--currency", help="Currency pair | Ex: USDT_ETH", default='USDT_ETH')
+		parser.add_argument("-b", "--backtest", help="Mode Backtest",action="store_true")
+		parser.add_argument("-s", "--start", help="Start time in YYYY-MM-DD HH:MM:SS (for backtesting), '2016-11-02 14:00:00' by default",default='2016-11-02 14:00:00')
+		parser.add_argument("-e", "--end", help="End time in YYYY-MM-DD HH:MM:SS (for backtesting), '2018-12-14 20:53:20' by default",default='2018-12-14 20:53:20')
+		parser.add_argument("-S", "--short", help="Enable Short Mode",action="store_true")
+		args = vars(parser.parse_args())
+	except:
+		print "ArgumentParser Error type -h for help"
 		sys.exit(2)
 
-	for opt, arg in opts:
-		if opt == '-h':
-			print 'trading-bot.py -p <period length> -c <currency pair> -n <period of moving average>'
-			sys.exit()
-		elif opt in ("-p", "--period"):
-			if (int(arg) in [300,900,1800,7200,14400,86400]):
-				period = arg
-			else:
-				print 'Poloniex requires periods in 300,900,1800,7200,14400, or 86400 second increments'
-				sys.exit(2)
-		elif opt in ("-c", "--currency"):
-			pair = arg
-		elif opt in ("-n", "--points"):
-			lengthOfMA = int(arg)
-		elif opt in ("-s"):
-			startTime = arg
-		elif opt in ("-e"):
-			endTime = arg
+	pair = args["currency"]
+	period = args["period"]
 
-	if (startTime):
-		chart = BotChart("poloniex","BTC_XMR",300)
+	short_mode = args["short"]
 
-		strategy = BotStrategy()
+	if (args["backtest"]):
+
+		debut = args['start']
+		fin = args['end']
+
+		chart = BotChart("poloniex",pair,period,debut,fin)
+
+		strategy = stratRsi(period=period,short_mode=short_mode)
 
 		for candlestick in chart.getPoints():
 			strategy.tick(candlestick)
 
+		graphe = PlotGraphe(chart,strategy)
+		graphe.plotChart()
+
+		try:
+			sigma = chart.getSigma()*float(chart.compteur)**0.5
+			perf = graphe.perf
+			sharpeRatio = perf/sigma
+			print("\n Perforance: "+str(perf))
+			print("\n Ratio de Sharpe: "+str(sharpeRatio)+"\n")
+		except Exception as e:
+			pass
+
+
 	else:
-		chart = BotChart("poloniex","BTC_XMR",300,False)
-		
-		strategy = BotStrategy()
+		chart = BotChart("poloniex",pair,period,backtest=False)
+
+		strategy = stratRsi(period,short_mode,backtest=False)
 
 		candlesticks = []
 		developingCandlestick = BotCandlestick()
@@ -64,7 +78,7 @@ def main(argv):
 				candlesticks.append(developingCandlestick)
 				strategy.tick(developingCandlestick)
 				developingCandlestick = BotCandlestick()
-		
+
 			time.sleep(int(30))
 
 if __name__ == "__main__":

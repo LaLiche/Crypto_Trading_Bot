@@ -2,8 +2,8 @@ import numpy
 
 class BotIndicators(object):
 	def __init__(self):
-		self.tenkan_sen = []
-		self.kijun_sen = []
+		self.tenkan_sen = 0
+		self.kijun_sen = 0
 		self.true_range = []
 
 	def momentum(self, dataPoints, period=14):
@@ -51,6 +51,9 @@ class BotIndicators(object):
  			rsi[i] = 100. - 100./(1. + rs)
 		return rsi[-1]
 
+	def simpleAverage(self,prices,nbPeriod):
+		return sum(prices[-min(len(prices),nbPeriod):]) / float(len(prices[-min(len(prices),nbPeriod):]))
+
 	def expAverage(self,prices,candlestick,nbPeriod,lastAverage):
 		if lastAverage != 0:
 			res = (2/float(nbPeriod+1))*candlestick.close+(1-2/float(nbPeriod+1))*lastAverage
@@ -58,8 +61,6 @@ class BotIndicators(object):
 			res = (candlestick.low + candlestick.high + candlestick.close)/float(3)
 		return res
 
-	def simpleAverage(self,prices,nbPeriod):
-	 	return sum(prices[-min(len(prices),nbPeriod):]) / float(len(prices[-min(len(prices),nbPeriod):]))
 
 	def expMoyenne(self,prices,nbPeriod,lastAverage):
 		a = 2./float(nbPeriod+1)
@@ -89,7 +90,7 @@ class BotIndicators(object):
 			high_9 = max(high)
 			low_9 = min(low)
 
-		self.tenkan_sen.append((high_9+low_9)/2)
+		self.tenkan_sen = (high_9+low_9)/2
 
 		if len(high) >= 26:
 			high_26 = max(high[-26:])
@@ -98,13 +99,13 @@ class BotIndicators(object):
 			high_26 = max(high)
 			low_26 = min(low)
 
-		self.kijun_sen.append((high_26+low_26)/2)
+		self.kijun_sen = (high_26+low_26)/2
+
+		senkou_span_A = (self.tenkan_sen+self.kijun_sen)/2
 
 		if len(high) >= 52:
-			senkou_span_A = (self.tenkan_sen[-1]+self.kijun_sen[-1])/2
 			senkou_span_B = (max(high[-52:])+min(low[-52:]))/2
 		else:
-			senkou_span_A = (self.tenkan_sen[0]+self.kijun_sen[0])/2
 			senkou_span_B = (max(high)+min(low))/2
 
 		return [senkou_span_A,senkou_span_B]

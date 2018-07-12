@@ -18,8 +18,8 @@ class PlotGraphe(object):
         lastAverage = 0.
         for i in range(1,len(prices)):
             RSI_data.append(self.strategy.indicators.RSI(prices[:i],14))
-            # RSI_moyenne.append(self.strategy.indicators.simpleAverage(RSI_data[:i],7))
-            RSI_moyenne.append(self.strategy.indicators.expMoyenne(RSI_data[:i],21,lastAverage))
+            RSI_moyenne.append(self.strategy.indicators.simpleAverage(RSI_data[:i],12))
+            # RSI_moyenne.append(self.strategy.indicators.expMoyenne(RSI_data[:i],21,lastAverage))
             lastAverage = RSI_moyenne[-1]
         # RSI_data.append(50)
 
@@ -134,8 +134,8 @@ class PlotGraphe(object):
 
     def plotTrade(self,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time):
 
-        trade_entry_data = [t * 0.9 for t in trade_entry_data]
-        trade_exit_data = [t * 0.9 for t in trade_exit_data]
+        trade_entry_data = [t * 1 for t in trade_entry_data]
+        trade_exit_data = [t * 1 for t in trade_exit_data]
         entryPoint = plotly.graph_objs.Scatter(
         x = trade_entry_time,
         y = trade_entry_data,
@@ -248,11 +248,11 @@ class PlotGraphe(object):
 
         trace = self.plotCandle(open_data,close_data,high_data,low_data,x_data)
         rsi,rsi_moy,rsi_min,rsi_max = self.plotRsi(close_data,x_data)
-        st,st_min,st_max = self.plotStochastique(close_data,low_data, high_data, x_data)
+        # st,st_min,st_max = self.plotStochastique(close_data,low_data, high_data, x_data)
         entryPoint,exitPoint = self.plotTrade(trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time)
-        portfolio = self.plotPortfolio(close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,x_data)
-        bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
-        span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimokuA,x_data_ichimokuB)
+        # portfolio = self.plotPortfolio(close_data,trade_entry_data,trade_entry_time,trade_exit_data,trade_exit_time,x_data)
+        # bollingerSup,bollinger,bollingerInf = self.plotBollinger(close_data,x_data)
+        # span_A,span_B = self.plotIchimoku(high_data,low_data,x_data_ichimokuA,x_data_ichimokuB)
 
         layout = {
             'title': self.chart.pair+" "+str(self.chart.period)+" s",
@@ -271,13 +271,13 @@ class PlotGraphe(object):
 
         fig = plotly.tools.make_subplots(rows=2, cols=1,shared_xaxes=True)
         fig.append_trace(trace, 1, 1)
-        fig.append_trace(bollingerSup,1,1)
-        fig.append_trace(bollinger,1,1)
-        fig.append_trace(bollingerInf,1,1)
+        # fig.append_trace(bollingerSup,1,1)
+        # fig.append_trace(bollinger,1,1)
+        # fig.append_trace(bollingerInf,1,1)
         fig.append_trace(entryPoint, 1, 1)
         fig.append_trace(exitPoint, 1, 1)
-        fig.append_trace(span_A, 1, 1)
-        fig.append_trace(span_B, 1, 1)
+        # fig.append_trace(span_A, 1, 1)
+        # fig.append_trace(span_B, 1, 1)
         fig.append_trace(rsi, 2, 1)
         fig.append_trace(rsi_moy, 2, 1)
         fig.append_trace(rsi_min, 2, 1)
@@ -285,8 +285,9 @@ class PlotGraphe(object):
         # fig.append_trace(st, 2, 1)
         # fig.append_trace(st_min, 2, 1)
         # fig.append_trace(st_max, 2, 1)
+
         fig['layout']=layout
         plotly.offline.plot(fig,filename='graphe.html')
 
-        fig2 = plotly.graph_objs.Figure(data=portfolio,layout=layout2)
-        plotly.offline.plot(fig2,filename='portfolio.html')
+        # fig2 = plotly.graph_objs.Figure(data=portfolio,layout=layout2)
+        # plotly.offline.plot(fig2,filename='portfolio.html')
