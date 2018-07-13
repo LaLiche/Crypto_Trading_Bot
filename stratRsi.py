@@ -53,6 +53,7 @@ class stratRsi(BotStrategy):
             self.rsiZ2 = max(rsi,self.rsiZ2) # on stocke le rsi de la zone 2
             if self.currentPrice < self.priceZ1*0.98 :
                 if (rsi < self.rsiZ2-(self.rsiZ1-self.rsiZ2)/2 or rsi <seuilmin) and rsi > self.rsiZ1 and self.countOpen >= self.distanceMin: # divergence : on passe en zone 3
+                    self.rsiZ3 = rsi
                     self.zone = 3
                 elif rsi < self.rsiZ1:
                     self.rsiZ1 = rsi
@@ -79,6 +80,8 @@ class stratRsi(BotStrategy):
             if rsi < seuilmin:
                 self.resetOpen()
                 self.zone = 1
+                self.rsiZ1 = min(rsi,self.rsiZ1)
+
 
         if self.zone != 0:
             self.countOpen += 1
@@ -108,7 +111,9 @@ class stratRsi(BotStrategy):
         elif self.zone_c == 2:
             self.rsiZ2_c = min(rsi,self.rsiZ2_c) # on stocke le rsi de la zone 2
             if self.currentPrice > self.priceZ1_c*1.02:
+                # print(rsi,self.rsiZ1_c,self.rsiZ2_c,self.currentPrice)
                 if (rsi > self.rsiZ1_c-(self.rsiZ1_c-self.rsiZ2_c)/2 or rsi > 70) and rsi < self.rsiZ1_c and self.countClose >= self.distanceMin:
+                    self.rsiZ3_c = rsi
                     self.zone_c = 3
                 elif rsi > self.rsiZ1_c:
                     self.rsiZ1_c = rsi
@@ -119,6 +124,7 @@ class stratRsi(BotStrategy):
 
         elif self.zone_c == 3:
             self.rsiZ3_c = max(rsi,self.rsiZ3_c)
+            # print(rsi,self.rsiZ2_c)
             if rsi < self.rsiZ2_c: #on passe en zone 4
                 self.resetClose()
                 return True
@@ -133,6 +139,8 @@ class stratRsi(BotStrategy):
             if rsi > 70:
                 self.resetClose()
                 self.zone_c = 1
+                self.rsiZ1_c = max(rsi,self.rsiZ1_c)
+
 
         if self.zone_c != 0:
             self.countClose += 1
