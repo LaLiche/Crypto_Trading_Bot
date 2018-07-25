@@ -31,7 +31,7 @@ class stratRsi(BotStrategy):
         rsi = self.indicators.RSI(self.prices,14)
         seuilmin = 30
 
-        if self.period == 1800:
+        if self.period <= 1800:
             self.RSI_data.append(rsi)
             self.RSI_moyenne.append(self.indicators.simpleAverage(self.RSI_data,12))
             rsi = self.RSI_moyenne[-1]
@@ -91,7 +91,7 @@ class stratRsi(BotStrategy):
 
     def condRsiClose(self):
         rsi = self.indicators.RSI(self.prices)
-        if self.period == 1800:
+        if self.period <= 1800:
             self.RSI_data.append(rsi)
             self.RSI_moyenne.append(self.indicators.simpleAverage(self.RSI_data,12))
             rsi = self.RSI_moyenne[-1]
