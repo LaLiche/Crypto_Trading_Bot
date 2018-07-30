@@ -2,6 +2,8 @@ import sys
 import argparse
 import time
 import pprint
+import urllib2
+import urllib
 
 from botchart import BotChart
 from botstrategy import BotStrategy
@@ -65,7 +67,7 @@ def main(argv):
 		strategy = stratRsi(period,short_mode,backtest=False)
 
 		candlesticks = []
-		developingCandlestick = BotCandlestick()
+		developingCandlestick = BotCandlestick(period=period)
 
 		while True:
 			try:
