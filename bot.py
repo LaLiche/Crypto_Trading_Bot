@@ -79,7 +79,7 @@ def main(argv):
 			if (developingCandlestick.isClosed()):
 				candlesticks.append(developingCandlestick)
 				strategy.tick(developingCandlestick)
-				developingCandlestick = BotCandlestick()
+				developingCandlestick = BotCandlestick(period=period)
 
 			time.sleep(int(30))
 
