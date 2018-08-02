@@ -2,7 +2,7 @@
 
 A little side-project called **Zbot** inspired by github user @bwentzloff.
 
-Created with @LaLiche :)
+Created with @Adriy1 :)
 
 
 ## Description
